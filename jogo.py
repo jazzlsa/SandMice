@@ -22,12 +22,16 @@ IMG_WIDTH = 80
 IMG_HEIGHT = 80
 ENEMY_WIDTH = 80
 ENEMY_HEIGHT = 80
+COIN_WIDTH = 30
+COIN_HEIGHT = 30
 
 font = pygame.font.SysFont(None, 48)
 IMG = pygame.image.load('assets\madfoxlogo.jpg').convert_alpha()
 IMG = pygame.transform.scale(IMG, (IMG_WIDTH, IMG_HEIGHT))
 IMG2 = pygame.image.load('assets\grandma.png').convert_alpha()
 IMG2 = pygame.transform.scale(IMG2, (ENEMY_WIDTH, ENEMY_HEIGHT))
+IMG3 = pygame.image.load('assets\coin.png').convert_alpha()
+IMG3 = pygame.transform.scale(IMG3, (COIN_WIDTH, COIN_HEIGHT))
 background = pygame.image.load('assets\planodefundo.png').convert()
 
 # ----- Inicia estruturas de dados
@@ -39,8 +43,10 @@ class jogador(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
         self.rect.bottom = HEIGHT - 100
+        self.vida = 3
         self.speedx = 0
         self.speedy = 0
+        self.pontos = 0
 
     def update(self):
         self.rect.x += self.speedx
@@ -79,19 +85,36 @@ class inimigo(pygame.sprite.Sprite):
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
 
+class coin(pygame.sprite.Sprite):
+    def __init__(self,img):
+        pygame.sprite.Sprite.__init__(self)
+        
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.centerx = random.randint(COIN_WIDTH, WIDTH - COIN_WIDTH)
+        self.rect.bottom = random.randint(COIN_HEIGHT, HEIGHT - COIN_HEIGHT)
+        self.speedx = 0
+        self.speedy = 0
+
 game = True
 # Variável para o ajuste de velocidade
 clock = pygame.time.Clock()
-FPS = 30
+FPS = 60
+vel_padrao = 5
 
 # Criando um grupo de sprites
 sprites = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
+moedas = pygame.sprite.Group()
 # Criando o jogador
 player = jogador(IMG)
 vovo = inimigo(IMG2)
+for i in range(5):
+    moeda = coin(IMG3)
+    moedas.add(moeda)
 sprites.add(player)
 enemies.add(vovo)
+moedas.add(moeda)
 
 # ===== Loop principal =====
 while game:
@@ -103,13 +126,13 @@ while game:
             game = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player.speedx -= 8
+                player.speedx -= vel_padrao
             if event.key == pygame.K_RIGHT:
-                player.speedx += 8
+                player.speedx += vel_padrao
             if event.key == pygame.K_UP:
-                player.speedy -= 8
+                player.speedy -= vel_padrao
             if event.key == pygame.K_DOWN:
-                player.speedy += 8
+                player.speedy += vel_padrao
             if event.key == pygame.K_a:
                 vovo.speedx -= 8
             if event.key == pygame.K_d:
@@ -122,13 +145,13 @@ while game:
         if event.type == pygame.KEYUP:
             # Dependendo da tecla, altera a velocidade.
             if event.key == pygame.K_LEFT:
-                player.speedx += 8
+                player.speedx += vel_padrao
             if event.key == pygame.K_RIGHT:
-                player.speedx -= 8
+                player.speedx -= vel_padrao
             if event.key == pygame.K_UP:
-                player.speedy += 8
+                player.speedy += vel_padrao
             if event.key == pygame.K_DOWN:
-                player.speedy -= 8
+                player.speedy -= vel_padrao
             if event.key == pygame.K_a:
                 vovo.speedx += 8
             if event.key == pygame.K_d:
@@ -140,15 +163,28 @@ while game:
     
     sprites.update()
     enemies.update()
+    pontuacao = font.render('Pontos: {0}'.format(player.pontos), True, YELLOW)
+    vidas_rato = font.render('Vidas: {0}'.format(player.vida), True, YELLOW)
 
-    if pygame.sprite.spritecollide(player, enemies, True):
-        game = False
+    if pygame.sprite.spritecollide(player, enemies, True): #Se colisao com inimigo -> morte
+        player.vida -= 1
     
+    if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha ponto e cria uma nova moeda
+        player.pontos += 50
+        moeda = coin(IMG3)
+        moedas.add(moeda)
+    
+    if player.vida <= 0:
+        game = False
+
     # ----- Gera saídas
     window.fill(WHITE)  # Preenche com a cor branca
-    window.blit(background,(0,0))
+    window.blit(background,(0,0)) # Coloca o background
     sprites.draw(window)
     enemies.draw(window)
+    moedas.draw(window)
+    window.blit(pontuacao, (10, 10))
+    window.blit(vidas_rato, (10, 50))
 
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
