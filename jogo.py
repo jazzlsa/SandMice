@@ -79,7 +79,7 @@ class jogador(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
         self.rect.bottom = HEIGHT - 100
-        self.vida = 3
+        self.vida = 5
         self.speedx = 0
         self.speedy = 0
         self.pontos = 0
@@ -136,7 +136,9 @@ game = True
 # Variável para o ajuste de velocidade
 clock = pygame.time.Clock()
 FPS = 60
-vel_padrao = 5
+vel_padrao_rato = 5
+vel_padrao_vovo = 3
+ultimotempo = [0]
 
 # Criando um grupo de sprites
 sprites = pygame.sprite.Group()
@@ -150,11 +152,11 @@ for i in range(5):
     moedas.add(moeda)
 sprites.add(player)
 enemies.add(vovo)
-moedas.add(moeda)
 
 # ===== Loop principal =====
 while game:
     clock.tick(FPS)
+    tempo = pygame.time.get_ticks()
     # ----- Trata eventos
     for event in pygame.event.get():
         # ----- Verifica consequências
@@ -162,48 +164,52 @@ while game:
             game = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                player.speedx -= vel_padrao
+                player.speedx -= vel_padrao_rato
             if event.key == pygame.K_RIGHT:
-                player.speedx += vel_padrao
+                player.speedx += vel_padrao_rato
             if event.key == pygame.K_UP:
-                player.speedy -= vel_padrao
+                player.speedy -= vel_padrao_rato
             if event.key == pygame.K_DOWN:
-                player.speedy += vel_padrao
+                player.speedy += vel_padrao_rato
             if event.key == pygame.K_a:
-                vovo.speedx -= 8
+                vovo.speedx -= vel_padrao_vovo
             if event.key == pygame.K_d:
-                vovo.speedx += 8
+                vovo.speedx += vel_padrao_vovo
             if event.key == pygame.K_w:
-                vovo.speedy -= 8
+                vovo.speedy -= vel_padrao_vovo
             if event.key == pygame.K_s:
-                vovo.speedy += 8
+                vovo.speedy += vel_padrao_vovo
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
             # Dependendo da tecla, altera a velocidade.
             if event.key == pygame.K_LEFT:
-                player.speedx += vel_padrao
+                player.speedx += vel_padrao_rato
             if event.key == pygame.K_RIGHT:
-                player.speedx -= vel_padrao
+                player.speedx -= vel_padrao_rato
             if event.key == pygame.K_UP:
-                player.speedy += vel_padrao
+                player.speedy += vel_padrao_rato
             if event.key == pygame.K_DOWN:
-                player.speedy -= vel_padrao
+                player.speedy -= vel_padrao_rato
             if event.key == pygame.K_a:
-                vovo.speedx += 8
+                vovo.speedx += vel_padrao_vovo
             if event.key == pygame.K_d:
-                vovo.speedx -= 8
+                vovo.speedx -= vel_padrao_vovo
             if event.key == pygame.K_w:
-                vovo.speedy += 8
+                vovo.speedy += vel_padrao_vovo
             if event.key == pygame.K_s:
-                vovo.speedy -= 8
+                vovo.speedy -= vel_padrao_vovo
     
     sprites.update()
     enemies.update()
     pontuacao = font.render('Pontos: {0}'.format(player.pontos), True, YELLOW)
     vidas_rato = font.render('Vidas: {0}'.format(player.vida), True, YELLOW)
+    texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, YELLOW)
 
     if pygame.sprite.spritecollide(player, enemies, True): #Se colisao com inimigo -> morte
         player.vida -= 1
+        ultimotempo.append(tempo)
+        vovo = inimigo(IMG2)
+        enemies.add(vovo)
     
     if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha ponto e cria uma nova moeda
         player.pontos += 50
@@ -222,6 +228,7 @@ while game:
     moedas.draw(window)
     window.blit(pontuacao, (10, 10))
     window.blit(vidas_rato, (10, 50))
+    window.blit(texto_tempo, (10, 600))
 
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
