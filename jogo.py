@@ -248,6 +248,10 @@ while game:
     if pygame.sprite.spritecollide(player, enemies, True): #Se colisao com inimigo -> morte
         player.vida -= 1
         ultimotempo.append(tempo)
+        A = 0
+        D = 0
+        W = 0
+        S = 0
         vovo = inimigo(IMG2)
         enemies.add(vovo)
     
