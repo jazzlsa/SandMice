@@ -1,5 +1,6 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
+from re import L
 import pygame
 import random
 
@@ -155,12 +156,23 @@ sprites.add(player)
 enemies.add(vovo)
 moedas.add(moeda)
 
+Left = 0
+Right = 0
+Up = 0
+Down = 0
+A = 0
+D = 0
+W = 0
+S = 0
 #Tela Inicial
 inicio = False
 while inicio == False:
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
             inicio = True
+        if event.type == pygame.QUIT:
+            inicio = True
+            game = False
     window.fill((0, 0, 0))
     window.blit(IMGINICIAL, (0, 0))
     pygame.display.update()
@@ -175,41 +187,57 @@ while game:
         if event.type == pygame.QUIT:
             game = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                player.speedx = -vel_padrao_rato
-            if event.key == pygame.K_RIGHT:
-                player.speedx = +vel_padrao_rato
-            if event.key == pygame.K_UP:
-                player.speedy = -vel_padrao_rato
-            if event.key == pygame.K_DOWN:
-                player.speedy = +vel_padrao_rato
-            if event.key == pygame.K_a:
-                vovo.speedx = -vel_padrao_vovo
-            if event.key == pygame.K_d:
-                vovo.speedx = +vel_padrao_vovo
-            if event.key == pygame.K_w:
-                vovo.speedy = -vel_padrao_vovo
-            if event.key == pygame.K_s:
-                vovo.speedy = +vel_padrao_vovo
+            if event.key == pygame.K_LEFT and Left == 0:
+                player.speedx -= vel_padrao_rato
+                Left += 1
+            if event.key == pygame.K_RIGHT and Right == 0:
+                player.speedx += vel_padrao_rato
+                Right += 1
+            if event.key == pygame.K_UP and Up == 0:
+                player.speedy -= vel_padrao_rato
+                Up += 1
+            if event.key == pygame.K_DOWN and Down == 0:
+                player.speedy += vel_padrao_rato
+                Down += 1
+            if event.key == pygame.K_a and A == 0:
+                vovo.speedx -= vel_padrao_vovo
+                A += 1
+            if event.key == pygame.K_d and D == 0:
+                vovo.speedx += vel_padrao_vovo
+                D += 1
+            if event.key == pygame.K_w and W == 0:
+                vovo.speedy -= vel_padrao_vovo
+                W += 1
+            if event.key == pygame.K_s and S == 0:
+                vovo.speedy += vel_padrao_vovo
+                S += 1
         # Verifica se soltou alguma tecla.
         if event.type == pygame.KEYUP:
             # Dependendo da tecla, altera a velocidade.
-            if event.key == pygame.K_LEFT:
-                player.speedx = 0
-            if event.key == pygame.K_RIGHT:
-                player.speedx = 0
-            if event.key == pygame.K_UP:
-                player.speedy = 0
-            if event.key == pygame.K_DOWN:
-                player.speedy = 0
-            if event.key == pygame.K_a:
-                vovo.speedx = 0
-            if event.key == pygame.K_d:
-                vovo.speedx = 0
-            if event.key == pygame.K_w:
-                vovo.speedy = 0
-            if event.key == pygame.K_s:
-                vovo.speedy = 0
+            if event.key == pygame.K_LEFT and Left == 1:
+                player.speedx += vel_padrao_rato
+                Left -= 1
+            if event.key == pygame.K_RIGHT and Right == 1:
+                player.speedx -= vel_padrao_rato
+                Right -= 1
+            if event.key == pygame.K_UP and Up == 1:
+                player.speedy += vel_padrao_rato
+                Up -= 1
+            if event.key == pygame.K_DOWN and Down == 1:
+                player.speedy -= vel_padrao_rato
+                Down -= 1
+            if event.key == pygame.K_a and A == 1:
+                vovo.speedx += vel_padrao_vovo
+                A -= 1
+            if event.key == pygame.K_d and D == 1:
+                vovo.speedx -= vel_padrao_vovo
+                D -= 1
+            if event.key == pygame.K_w and W == 1:
+                vovo.speedy += vel_padrao_vovo
+                W -= 1
+            if event.key == pygame.K_s and S == 1:
+                vovo.speedy -= vel_padrao_vovo
+                S -= 1
     
     sprites.update()
     enemies.update()
