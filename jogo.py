@@ -31,6 +31,7 @@ TILE_RESOLUTION = 32
 TILES_HORIZONTAL, TILES_VERTICAL = WIDTH//TILE_RESOLUTION, HEIGHT//TILE_RESOLUTION
 
 font = pygame.font.SysFont(None, 48)
+IMGINICIAL = pygame.image.load('assets\SandMice.png').convert()
 IMG = pygame.image.load('assets\madfoxlogo.jpg').convert_alpha()
 IMG = pygame.transform.scale(IMG, (IMG_WIDTH, IMG_HEIGHT))
 IMG2 = pygame.image.load('assets\grandma.png').convert_alpha()
@@ -152,6 +153,17 @@ for i in range(5):
     moedas.add(moeda)
 sprites.add(player)
 enemies.add(vovo)
+moedas.add(moeda)
+
+#Tela Inicial
+inicio = False
+while inicio == False:
+    for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            inicio = True
+    window.fill((0, 0, 0))
+    window.blit(IMGINICIAL, (0, 0))
+    pygame.display.update()
 
 # ===== Loop principal =====
 while game:
