@@ -33,6 +33,7 @@ TILES_HORIZONTAL, TILES_VERTICAL = WIDTH//TILE_RESOLUTION, HEIGHT//TILE_RESOLUTI
 
 font = pygame.font.SysFont(None, 48)
 IMGINICIAL = pygame.image.load('assets\SandMice.png').convert()
+IMGFINAL = pygame.image.load('assets\SandMiceFinal.png').convert()
 IMG = pygame.image.load('assets\mouse-face.png').convert_alpha()
 IMG = pygame.transform.scale(IMG, (IMG_WIDTH, IMG_HEIGHT))
 IMG2 = pygame.image.load('assets\grandma.png').convert_alpha()
@@ -277,5 +278,12 @@ while game:
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
 
-# ===== Finalização =====
-pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
+if game==False: # ----- Caso o jogo termine, ele fica esperando que o usuário digite a letra Q para sair
+    window.blit(IMGFINAL, (0, 0))
+    pygame.display.update()
+    while(True):
+        for event in pygame.event.get():
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_q:
+                    pygame.quit()
+                    quit()
