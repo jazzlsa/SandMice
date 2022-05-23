@@ -275,7 +275,11 @@ while game:
         S = 0
         vovo = inimigo(IMG2)
         enemies.add(vovo)
-        message_new_round()
+        player.rect.x = random.randint(60, WIDTH-60)
+        player.rect.y = random.randint(60, HEIGHT-60)
+        sprites.add(player)
+        #message_new_round()
+
     
     if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha ponto e cria uma nova moeda
         player.pontos += 50
