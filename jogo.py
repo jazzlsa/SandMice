@@ -25,11 +25,6 @@ ENEMY_WIDTH = 80
 ENEMY_HEIGHT = 80
 COIN_WIDTH = 30
 COIN_HEIGHT = 30
-TILE_WIDTH = 32
-TILE_HEIGHT = 32
-
-TILE_RESOLUTION = 32
-TILES_HORIZONTAL, TILES_VERTICAL = WIDTH//TILE_RESOLUTION, HEIGHT//TILE_RESOLUTION
 
 font = pygame.font.SysFont(None, 48)
 IMGINICIAL = pygame.image.load('assets\SandMice.png').convert()
@@ -40,10 +35,6 @@ IMG2 = pygame.image.load('assets\grandma.png').convert_alpha()
 IMG2 = pygame.transform.scale(IMG2, (ENEMY_WIDTH, ENEMY_HEIGHT))
 IMG3 = pygame.image.load('assets\coin.png').convert_alpha()
 IMG3 = pygame.transform.scale(IMG3, (COIN_WIDTH, COIN_HEIGHT))
-TILE_parede = pygame.image.load('assets\parede.png').convert_alpha()
-# TILE_parede = pygame.transform.scale(TILE_parede, (TILE_WIDTH, TILE_HEIGHT))
-TILE_chao = pygame.image.load('assets\chao.png').convert_alpha()
-# TILE_chao = pygame.transform.scale(TILE_chao, (TILE_WIDTH, TILE_HEIGHT))
 background = pygame.image.load('assets\planodefundo.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
 
@@ -158,16 +149,18 @@ A = 0
 D = 0
 W = 0
 S = 0
+numrounds = 6
 #Tela Inicial
-inicio = False
-while inicio == False:
+INICIO = True
+JOGANDO = False
+TROCA_ROUND = False
+while INICIO:
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
-            inicio = True
+            INICIO = False
         if event.type == pygame.QUIT:
-            inicio = True
+            INICIO = False
             game = False
-    window.fill((0, 0, 0))
     window.blit(IMGINICIAL, (0, 0))
     pygame.display.update()
 
@@ -241,23 +234,19 @@ while game:
 
     if pygame.sprite.spritecollide(player, enemies, True): #Se colisao com inimigo -> morte
         player.vida -= 1
+        texto_round = font.render('ROUND {0}'.format(8-numrounds), True, WHITE)
+        numrounds -= 1
+        window.fill(BLACK)
+        window.blit(texto_round, (WIDTH/2-70,HEIGHT/2-70))
+        pygame.display.update()
+        pygame.time.delay(3000)
         ultimotempo.append(tempo)
         A = 0
         D = 0
         W = 0
         S = 0
         vovo = inimigo(IMG2)
-        vovo.rect.x = random.randint(60, WIDTH-60)
-        vovo.rect.y = random.randint(60, HEIGHT-60)
         enemies.add(vovo)
-        perto = True
-        while(perto):
-            x_player = random.randint(60, WIDTH-60)
-            y_player = random.randint(60, WIDTH-60)
-            if(((x_player > (vovo.rect.x + 100)) or (x_player < (vovo.rect.x - 100))) and ((y_player > (vovo.rect.y + 100)) or (y_player < (vovo.rect.y - 100)))):
-                perto = False
-        player.rect.x = x_player
-        player.rect.y = y_player
         
         sprites.add(player)
         #message_new_round()
