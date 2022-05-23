@@ -274,9 +274,18 @@ while game:
         W = 0
         S = 0
         vovo = inimigo(IMG2)
+        vovo.rect.x = random.randint(60, WIDTH-60)
+        vovo.rect.y = random.randint(60, HEIGHT-60)
         enemies.add(vovo)
-        player.rect.x = random.randint(60, WIDTH-60)
-        player.rect.y = random.randint(60, HEIGHT-60)
+        perto = True
+        while(perto):
+            x_player = random.randint(60, WIDTH-60)
+            y_player = random.randint(60, WIDTH-60)
+            if(((x_player > (vovo.rect.x + 100)) or (x_player < (vovo.rect.x - 100))) and ((y_player > (vovo.rect.y + 100)) or (y_player < (vovo.rect.y - 100)))):
+                perto = False
+        player.rect.x = x_player
+        player.rect.y = y_player
+        
         sprites.add(player)
         #message_new_round()
 
