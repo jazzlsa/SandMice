@@ -54,6 +54,26 @@ def cria_mapa(tamanhox,tamanhoy):
             mapa[a].append(random.randint(0,1))
     return mapa
 
+def message_new_round():
+    clock = pygame.time.Clock()
+    counter, text = 5, '5'.rjust(3)
+    pygame.time.set_timer(pygame.USEREVENT, 1000)
+    font = pygame.font.SysFont('Consolas', 15)
+    window.blit(font.render('A vovó te pegou. Você tem mais {0} vida(s)'.format(player.vida), True, YELLOW), (100, 100))
+    run = True
+    while run:
+        for e in pygame.event.get():
+            if e.type == pygame.USEREVENT: 
+                counter -= 1
+                text = str(counter).rjust(3) if counter > 0 else 'Vamos lá'
+            if e.type == pygame.QUIT: 
+                run = False
+
+        window.blit(font.render(text, True, YELLOW), (150, 150))
+        pygame.display.flip()
+        clock.tick(5)
+                    
+
 rr = cria_mapa(TILES_HORIZONTAL,TILES_VERTICAL)
 mapa1 = [[0 if bbbb<3 or bbbb>16 else 1 for aaaa in range(TILES_HORIZONTAL)] for bbbb in range(TILES_VERTICAL)]
 
@@ -255,6 +275,7 @@ while game:
         S = 0
         vovo = inimigo(IMG2)
         enemies.add(vovo)
+        message_new_round()
     
     if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha ponto e cria uma nova moeda
         player.pontos += 50
