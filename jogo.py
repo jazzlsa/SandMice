@@ -33,7 +33,7 @@ TILES_HORIZONTAL, TILES_VERTICAL = WIDTH//TILE_RESOLUTION, HEIGHT//TILE_RESOLUTI
 
 font = pygame.font.SysFont(None, 48)
 IMGINICIAL = pygame.image.load('assets\SandMice.png').convert()
-IMG = pygame.image.load('assets\madfoxlogo.jpg').convert_alpha()
+IMG = pygame.image.load('assets\mouse-face.png').convert_alpha()
 IMG = pygame.transform.scale(IMG, (IMG_WIDTH, IMG_HEIGHT))
 IMG2 = pygame.image.load('assets\grandma.png').convert_alpha()
 IMG2 = pygame.transform.scale(IMG2, (ENEMY_WIDTH, ENEMY_HEIGHT))
