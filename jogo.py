@@ -278,12 +278,15 @@ while game:
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
 
-if game==False: # ----- Caso o jogo termine, ele fica esperando que o usuário digite a letra Q para sair
-    window.blit(IMGFINAL, (0, 0))
-    pygame.display.update()
-    while(True):
-        for event in pygame.event.get():
-            if event.type==pygame.KEYDOWN:
-                if event.key==pygame.K_q:
-                    pygame.quit()
-                    quit()
+#if game==False: # ----- Caso o jogo termine, ele fica esperando que o usuário digite a letra Q para sair.
+#    window.blit(IMGFINAL, (0, 0))
+#    pygame.display.update()
+#    while(True):
+#        for event in pygame.event.get():
+#            if event.type==pygame.KEYDOWN:
+#                if event.key==pygame.K_q:
+#                    pygame.quit()
+#                    quit()
+
+pygame.quit()
+quit()
