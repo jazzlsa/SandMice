@@ -64,7 +64,7 @@ class jogador(pygame.sprite.Sprite):
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
-        self.rect.bottom = HEIGHT - 100
+        self.rect.bottom = HEIGHT - 40
         self.speedx = 0
         self.speedy = 0
         self.pontos = 0
@@ -117,7 +117,22 @@ class coin(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
 
+def respawnamoedas(state, grupomoedas):
+    if state == TROCA_ROUND:
+        grupomoedas = pygame.sprite.Group()
+    while len(grupomoedas) < totalmoedas:
+        moeda = coin(IMG3)
+        grupomoedas.add(moeda)
+    return grupomoedas
+
 game = True
+
+INICIO = 0
+JOGANDO = 1
+TROCA_ROUND = 2
+FIM = 3
+
+estado = INICIO
 # Variável para o ajuste de velocidade
 clock = pygame.time.Clock()
 FPS = 60
@@ -129,15 +144,13 @@ ultimotempo = [0]
 sprites = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 moedas = pygame.sprite.Group()
+totalmoedas = 3
 # Criando o jogador
 player = jogador(IMG)
 vovo = inimigo(IMG2)
-for i in range(5):
-    moeda = coin(IMG3)
-    moedas.add(moeda)
 sprites.add(player)
 enemies.add(vovo)
-moedas.add(moeda)
+moedas = respawnamoedas(estado, moedas)
 
 Left = 0
 Right = 0
@@ -149,13 +162,6 @@ W = 0
 S = 0
 numrounds = 6
 #Tela Inicial
-
-INICIO = 0
-JOGANDO = 1
-TROCA_ROUND = 2
-FIM = 3
-
-estado = INICIO
 
 while estado == INICIO:
     tempo = pygame.time.get_ticks()
@@ -195,6 +201,10 @@ while game:
             D = 0
             W = 0
             S = 0
+            player.rect.centerx = WIDTH/2
+            player.rect.bottom = HEIGHT - 40
+            moedas = respawnamoedas(estado, moedas)
+
             estado = JOGANDO
         
         if estado == JOGANDO:
@@ -268,8 +278,8 @@ while game:
 
     if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha ponto e cria uma nova moeda
         player.pontos += 50
-        moeda = coin(IMG3)
-        moedas.add(moeda)
+        moedas = respawnamoedas(estado, moedas)
+
 
     # ----- Gera saídas
     if estado == JOGANDO:
