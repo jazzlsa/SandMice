@@ -1,6 +1,5 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
-from re import L
 import pygame
 import random
 
@@ -38,24 +37,24 @@ IMG3 = pygame.transform.scale(IMG3, (COIN_WIDTH, COIN_HEIGHT))
 background = pygame.image.load('assets\planodefundo.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
 
-def message_new_round():
-    clock = pygame.time.Clock()
-    counter, text = 5, '5'.rjust(3)
-    pygame.time.set_timer(pygame.USEREVENT, 1000)
-    font = pygame.font.SysFont('Consolas', 15)
-    window.blit(font.render('A vovó te pegou. Você tem mais {0} vida(s)'.format(player.vida), True, YELLOW), (100, 100))
-    run = True
-    while run:
-        for e in pygame.event.get():
-            if e.type == pygame.USEREVENT: 
-                counter -= 1
-                text = str(counter).rjust(3) if counter > 0 else 'Vamos lá'
-            if e.type == pygame.QUIT: 
-                run = False
+# def message_new_round():
+#     clock = pygame.time.Clock()
+#     counter, text = 5, '5'.rjust(3)
+#     pygame.time.set_timer(pygame.USEREVENT, 1000)
+#     font = pygame.font.SysFont('Consolas', 15)
+#     window.blit(font.render('A vovó te pegou. Você tem mais {0} vida(s)'.format(player.vida), True, YELLOW), (100, 100))
+#     run = True
+#     while run:
+#         for e in pygame.event.get():
+#             if e.type == pygame.USEREVENT: 
+#                 counter -= 1
+#                 text = str(counter).rjust(3) if counter > 0 else 'Vamos lá'
+#             if e.type == pygame.QUIT: 
+#                 run = False
 
-        window.blit(font.render(text, True, YELLOW), (150, 150))
-        pygame.display.flip()
-        clock.tick(5)
+#         window.blit(font.render(text, True, YELLOW), (150, 150))
+#         pygame.display.flip()
+#         clock.tick(5)
                     
 # ----- Inicia estruturas de dados
 class jogador(pygame.sprite.Sprite):
@@ -66,7 +65,6 @@ class jogador(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
         self.rect.bottom = HEIGHT - 100
-        self.vida = 5
         self.speedx = 0
         self.speedy = 0
         self.pontos = 0
@@ -91,7 +89,7 @@ class inimigo(pygame.sprite.Sprite):
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
-        self.rect.bottom = HEIGHT - 300
+        self.rect.bottom = 0 + 100
         self.speedx = 0
         self.speedy = 0
 
@@ -151,138 +149,141 @@ W = 0
 S = 0
 numrounds = 6
 #Tela Inicial
-INICIO = True
-JOGANDO = False
-TROCA_ROUND = False
-while INICIO:
+
+INICIO = 0
+JOGANDO = 1
+TROCA_ROUND = 2
+FIM = 3
+
+estado = INICIO
+
+while estado == INICIO:
+    tempo = pygame.time.get_ticks()
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
-            INICIO = False
+            estado = TROCA_ROUND
         if event.type == pygame.QUIT:
-            INICIO = False
+            estado = FIM
             game = False
     window.blit(IMGINICIAL, (0, 0))
+    ultimotempo.append(tempo)
     pygame.display.update()
 
 # ===== Loop principal =====
 while game:
     clock.tick(FPS)
     tempo = pygame.time.get_ticks()
+
     # ----- Trata eventos
     for event in pygame.event.get():
         # ----- Verifica consequências
         if event.type == pygame.QUIT:
             game = False
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT and Left == 0:
-                player.speedx -= vel_padrao_rato
-                Left += 1
-            if event.key == pygame.K_RIGHT and Right == 0:
-                player.speedx += vel_padrao_rato
-                Right += 1
-            if event.key == pygame.K_UP and Up == 0:
-                player.speedy -= vel_padrao_rato
-                Up += 1
-            if event.key == pygame.K_DOWN and Down == 0:
-                player.speedy += vel_padrao_rato
-                Down += 1
-            if event.key == pygame.K_a and A == 0:
-                vovo.speedx -= vel_padrao_vovo
-                A += 1
-            if event.key == pygame.K_d and D == 0:
-                vovo.speedx += vel_padrao_vovo
-                D += 1
-            if event.key == pygame.K_w and W == 0:
-                vovo.speedy -= vel_padrao_vovo
-                W += 1
-            if event.key == pygame.K_s and S == 0:
-                vovo.speedy += vel_padrao_vovo
-                S += 1
-        # Verifica se soltou alguma tecla.
-        if event.type == pygame.KEYUP:
-            # Dependendo da tecla, altera a velocidade.
-            if event.key == pygame.K_LEFT and Left == 1:
-                player.speedx += vel_padrao_rato
-                Left -= 1
-            if event.key == pygame.K_RIGHT and Right == 1:
-                player.speedx -= vel_padrao_rato
-                Right -= 1
-            if event.key == pygame.K_UP and Up == 1:
-                player.speedy += vel_padrao_rato
-                Up -= 1
-            if event.key == pygame.K_DOWN and Down == 1:
-                player.speedy -= vel_padrao_rato
-                Down -= 1
-            if event.key == pygame.K_a and A == 1:
-                vovo.speedx += vel_padrao_vovo
-                A -= 1
-            if event.key == pygame.K_d and D == 1:
-                vovo.speedx -= vel_padrao_vovo
-                D -= 1
-            if event.key == pygame.K_w and W == 1:
-                vovo.speedy += vel_padrao_vovo
-                W -= 1
-            if event.key == pygame.K_s and S == 1:
-                vovo.speedy -= vel_padrao_vovo
-                S -= 1
+        
+        if estado == TROCA_ROUND: # Adicionar aqui a mudança de personagem (if numrounds<=3) e tela de fim do jogo (numrounds<=0)
+            if numrounds <= 0:
+                pygame.quit()
+            texto_round = font.render('ROUND {0}'.format(7-numrounds), True, WHITE)
+            numrounds -= 1
+            window.fill(BLACK)
+            window.blit(texto_round, (WIDTH/2-70,HEIGHT/2-70))
+            pygame.display.update()
+            pygame.time.delay(2000)
+            tempo = pygame.time.get_ticks()
+            ultimotempo.append(tempo)
+            A = 0
+            D = 0
+            W = 0
+            S = 0
+            estado = JOGANDO
+        
+        if estado == JOGANDO:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT and Left == 0:
+                    player.speedx -= vel_padrao_rato
+                    Left += 1
+                if event.key == pygame.K_RIGHT and Right == 0:
+                    player.speedx += vel_padrao_rato
+                    Right += 1
+                if event.key == pygame.K_UP and Up == 0:
+                    player.speedy -= vel_padrao_rato
+                    Up += 1
+                if event.key == pygame.K_DOWN and Down == 0:
+                    player.speedy += vel_padrao_rato
+                    Down += 1
+                if event.key == pygame.K_a and A == 0:
+                    vovo.speedx -= vel_padrao_vovo
+                    A += 1
+                if event.key == pygame.K_d and D == 0:
+                    vovo.speedx += vel_padrao_vovo
+                    D += 1
+                if event.key == pygame.K_w and W == 0:
+                    vovo.speedy -= vel_padrao_vovo
+                    W += 1
+                if event.key == pygame.K_s and S == 0:
+                    vovo.speedy += vel_padrao_vovo
+                    S += 1
+            # Verifica se soltou alguma tecla.
+            if event.type == pygame.KEYUP:
+                # Dependendo da tecla, altera a velocidade.
+                if event.key == pygame.K_LEFT and Left == 1:
+                    player.speedx += vel_padrao_rato
+                    Left -= 1
+                if event.key == pygame.K_RIGHT and Right == 1:
+                    player.speedx -= vel_padrao_rato
+                    Right -= 1
+                if event.key == pygame.K_UP and Up == 1:
+                    player.speedy += vel_padrao_rato
+                    Up -= 1
+                if event.key == pygame.K_DOWN and Down == 1:
+                    player.speedy -= vel_padrao_rato
+                    Down -= 1
+                if event.key == pygame.K_a and A == 1:
+                    vovo.speedx += vel_padrao_vovo
+                    A -= 1
+                if event.key == pygame.K_d and D == 1:
+                    vovo.speedx -= vel_padrao_vovo
+                    D -= 1
+                if event.key == pygame.K_w and W == 1:
+                    vovo.speedy += vel_padrao_vovo
+                    W -= 1
+                if event.key == pygame.K_s and S == 1:
+                    vovo.speedy -= vel_padrao_vovo
+                    S -= 1
     
     sprites.update()
     enemies.update()
     pontuacao = font.render('Pontos: {0}'.format(player.pontos), True, YELLOW)
-    vidas_rato = font.render('Vidas: {0}'.format(player.vida), True, YELLOW)
     texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, YELLOW)
 
     if pygame.sprite.spritecollide(player, enemies, True): #Se colisao com inimigo -> morte
-        player.vida -= 1
-        texto_round = font.render('ROUND {0}'.format(8-numrounds), True, WHITE)
-        numrounds -= 1
-        window.fill(BLACK)
-        window.blit(texto_round, (WIDTH/2-70,HEIGHT/2-70))
-        pygame.display.update()
-        pygame.time.delay(3000)
-        ultimotempo.append(tempo)
-        A = 0
-        D = 0
-        W = 0
-        S = 0
+        # ATENÇÃO !!! SE O RATO MORRE EM CIMA DO SPAWN DA VOVO, O JOGO EXPLODE
+        estado = TROCA_ROUND
+
         vovo = inimigo(IMG2)
         enemies.add(vovo)
         
         sprites.add(player)
         #message_new_round()
 
-    
     if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha ponto e cria uma nova moeda
         player.pontos += 50
         moeda = coin(IMG3)
         moedas.add(moeda)
-    
-    if player.vida <= 0:
-        game = False
 
     # ----- Gera saídas
-    # window.fill(WHITE)  # Preenche com a cor branca
-    window.blit(background,(0,0)) # Coloca o background
-    # printa_mapa(mapa1,TILE_chao,TILE_parede,TILE_RESOLUTION)
-    sprites.draw(window)
-    enemies.draw(window)
-    moedas.draw(window)
-    window.blit(pontuacao, (10, 10))
-    window.blit(vidas_rato, (10, 50))
-    window.blit(texto_tempo, (10, 600))
+    if estado == JOGANDO:
+
+        window.blit(background,(0,0)) # Coloca o background
+
+        sprites.draw(window)
+        enemies.draw(window)
+        moedas.draw(window)
+        window.blit(pontuacao, (10, 10))
+        window.blit(texto_tempo, (10, 600))
 
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
-
-#if game==False: # ----- Caso o jogo termine, ele fica esperando que o usuário digite a letra Q para sair.
-#    window.blit(IMGFINAL, (0, 0))
-#    pygame.display.update()
-#    while(True):
-#        for event in pygame.event.get():
-#            if event.type==pygame.KEYDOWN:
-#                if event.key==pygame.K_q:
-#                    pygame.quit()
-#                    quit()
 
 pygame.quit()
 quit()
