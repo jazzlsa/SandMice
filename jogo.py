@@ -298,6 +298,7 @@ while game:
     sprites.update()
     enemies.update()
     pontuacao = font.render('Pontos: {0}'.format(player.pontos), True, YELLOW)
+    display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, YELLOW)
     texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, YELLOW)
 
     if pygame.sprite.spritecollide(player, enemies, True): #Se colisao com inimigo -> morte
@@ -327,6 +328,7 @@ while game:
         moedas.draw(window)
         queijos.draw(window)
         window.blit(pontuacao, (10, 10))
+        window.blit(display_queijos, (10, 40))
         window.blit(texto_tempo, (10, 600))
 
     # ----- Atualiza estado do jogo
