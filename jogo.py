@@ -24,6 +24,9 @@ ENEMY_WIDTH = 80
 ENEMY_HEIGHT = 80
 COIN_WIDTH = 30
 COIN_HEIGHT = 30
+CHEESE_WIDTH = 30
+CHEESE_HEIGHT = 30
+BONUS_VELOCITY = 0
 
 font = pygame.font.SysFont(None, 48)
 IMGINICIAL = pygame.image.load('assets\SandMice.png').convert()
@@ -34,6 +37,8 @@ IMG2 = pygame.image.load('assets\grandma.png').convert_alpha()
 IMG2 = pygame.transform.scale(IMG2, (ENEMY_WIDTH, ENEMY_HEIGHT))
 IMG3 = pygame.image.load('assets\coin.png').convert_alpha()
 IMG3 = pygame.transform.scale(IMG3, (COIN_WIDTH, COIN_HEIGHT))
+IMG4 = pygame.image.load('assets\cheese.png').convert_alpha()
+IMG4 = pygame.transform.scale(IMG4, (COIN_WIDTH, COIN_HEIGHT))
 background = pygame.image.load('assets\planodefundo.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
 
@@ -117,6 +122,17 @@ class coin(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
 
+class cheese(pygame.sprite.Sprite):
+    def __init__(self,img):
+        pygame.sprite.Sprite.__init__(self)
+        
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.centerx = random.randint(CHEESE_WIDTH, WIDTH - CHEESE_WIDTH)
+        self.rect.bottom = random.randint(CHEESE_HEIGHT, HEIGHT - CHEESE_HEIGHT)
+        self.speedx = 0
+        self.speedy = 0
+
 def respawnamoedas(state, grupomoedas):
     if state == TROCA_ROUND:
         grupomoedas = pygame.sprite.Group()
@@ -124,6 +140,13 @@ def respawnamoedas(state, grupomoedas):
         moeda = coin(IMG3)
         grupomoedas.add(moeda)
     return grupomoedas
+
+def respawnoqueijo(state, grupoqueijos):
+    if state == TROCA_ROUND:
+        grupoqueijos = pygame.sprite.Group()
+    queijos = coin(IMG4)
+    grupoqueijos.add(queijos)
+    return grupoqueijos
 
 game = True
 
@@ -144,6 +167,7 @@ ultimotempo = [0]
 sprites = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 moedas = pygame.sprite.Group()
+queijos = pygame.sprite.Group()
 totalmoedas = 3
 # Criando o jogador
 player = jogador(IMG)
@@ -151,6 +175,7 @@ vovo = inimigo(IMG2)
 sprites.add(player)
 enemies.add(vovo)
 moedas = respawnamoedas(estado, moedas)
+queijos = respawnoqueijo(estado, queijos)
 
 Left = 0
 Right = 0
@@ -204,6 +229,7 @@ while game:
             player.rect.centerx = WIDTH/2
             player.rect.bottom = HEIGHT - 40
             moedas = respawnamoedas(estado, moedas)
+            queijos = respawnoqueijo(estado, queijos)
 
             estado = JOGANDO
         
@@ -280,6 +306,16 @@ while game:
         player.pontos += 50
         moedas = respawnamoedas(estado, moedas)
 
+    if pygame.sprite.spritecollide(player, queijos, True): #Se colisao com queijo -> ganha ponto e cria uma nova moeda
+        vel_padrao_rato += 1
+        queijos = respawnoqueijo(estado, queijos)
+        player.speedx = 0
+        player.speedy = 0
+        Left = 0
+        Right = 0
+        Up = 0
+        Down = 0
+
 
     # ----- Gera saídas
     if estado == JOGANDO:
@@ -289,6 +325,7 @@ while game:
         sprites.draw(window)
         enemies.draw(window)
         moedas.draw(window)
+        queijos.draw(window)
         window.blit(pontuacao, (10, 10))
         window.blit(texto_tempo, (10, 600))
 
