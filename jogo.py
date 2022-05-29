@@ -73,6 +73,7 @@ class jogador(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
         self.pontos = 0
+        self.queijos = 0
 
     def update(self):
         self.rect.x += self.speedx
@@ -154,6 +155,7 @@ INICIO = 0
 JOGANDO = 1
 TROCA_ROUND = 2
 FIM = 3
+APARECE_QUEIJO = 100
 
 estado = INICIO
 # Variável para o ajuste de velocidade
@@ -162,6 +164,7 @@ FPS = 60
 vel_padrao_rato = 5
 vel_padrao_vovo = 3
 ultimotempo = [0]
+tempo_respawn_queijo = 10000
 
 # Criando um grupo de sprites
 sprites = pygame.sprite.Group()
@@ -200,6 +203,8 @@ while estado == INICIO:
     ultimotempo.append(tempo)
     pygame.display.update()
 
+pygame.time.set_timer(APARECE_QUEIJO, tempo_respawn_queijo) # Adicionar um queijo a cada X tempo
+
 # ===== Loop principal =====
 while game:
     clock.tick(FPS)
@@ -208,9 +213,12 @@ while game:
     # ----- Trata eventos
     for event in pygame.event.get():
         # ----- Verifica consequências
+        if event.type == APARECE_QUEIJO:
+            queijos = respawnoqueijo(estado, queijos)
+        
         if event.type == pygame.QUIT:
             game = False
-        
+
         if estado == TROCA_ROUND: # Adicionar aqui a mudança de personagem (if numrounds<=3) e tela de fim do jogo (numrounds<=0)
             if numrounds <= 0:
                 pygame.quit()
@@ -307,15 +315,7 @@ while game:
         moedas = respawnamoedas(estado, moedas)
 
     if pygame.sprite.spritecollide(player, queijos, True): #Se colisao com queijo -> ganha ponto e cria uma nova moeda
-        vel_padrao_rato += 1
-        queijos = respawnoqueijo(estado, queijos)
-        player.speedx = 0
-        player.speedy = 0
-        Left = 0
-        Right = 0
-        Up = 0
-        Down = 0
-
+        player.queijos += 1
 
     # ----- Gera saídas
     if estado == JOGANDO:
