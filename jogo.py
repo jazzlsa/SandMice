@@ -27,18 +27,28 @@ COIN_HEIGHT = 30
 CHEESE_WIDTH = 30
 CHEESE_HEIGHT = 30
 BONUS_VELOCITY = 0
+CAT_WIDTH = 80
+CAT_HEIGHT = 60
 
 font = pygame.font.SysFont(None, 48)
+#Telas iniciais e finais
 IMGINICIAL = pygame.image.load('assets\SandMice.png').convert()
 IMGFINAL = pygame.image.load('assets\SandMiceFinal.png').convert()
+#Player 1 - Rato
 IMG = pygame.image.load('assets\mouse-face.png').convert_alpha()
 IMG = pygame.transform.scale(IMG, (IMG_WIDTH, IMG_HEIGHT))
+#Player 2 - Inimigo
 IMG2 = pygame.image.load('assets\grandma.png').convert_alpha()
 IMG2 = pygame.transform.scale(IMG2, (ENEMY_WIDTH, ENEMY_HEIGHT))
+#Moeda
 IMG3 = pygame.image.load('assets\coin.png').convert_alpha()
 IMG3 = pygame.transform.scale(IMG3, (COIN_WIDTH, COIN_HEIGHT))
+#Queijo
 IMG4 = pygame.image.load('assets\cheese.png').convert_alpha()
 IMG4 = pygame.transform.scale(IMG4, (COIN_WIDTH, COIN_HEIGHT))
+#Gato Inimigo
+IMG5 = pygame.image.load('assets\cat.png').convert_alpha()
+IMG5 = pygame.transform.scale(IMG5, (CAT_WIDTH, CAT_HEIGHT))
 background = pygame.image.load('assets\planodefundo.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
 
@@ -149,6 +159,14 @@ def respawnoqueijo(state, grupoqueijos):
     grupoqueijos.add(queijos)
     return grupoqueijos
 
+def respawnogato(state, enemies):
+    if state != TROCA_ROUND:
+        NovoInimigo = inimigo(IMG5)
+        NovoInimigo.rect.centerx = random.randint(CHEESE_WIDTH, WIDTH - CHEESE_WIDTH)
+        NovoInimigo.rect.bottom = random.randint(CHEESE_HEIGHT, HEIGHT - CHEESE_HEIGHT)
+        enemies.add(NovoInimigo)
+    return enemies
+
 game = True
 
 INICIO = 0
@@ -156,6 +174,7 @@ JOGANDO = 1
 TROCA_ROUND = 2
 FIM = 3
 APARECE_QUEIJO = 100
+APARECE_GATO = 666
 
 estado = INICIO
 # Variável para o ajuste de velocidade
@@ -164,7 +183,8 @@ FPS = 60
 vel_padrao_rato = 5
 vel_padrao_vovo = 3
 ultimotempo = [0]
-tempo_respawn_queijo = 10000
+tempo_respawn_queijo = 10000 #A cada 10 segundos
+tempo_respawn_gato = 60000 #A cada 60 segundos
 
 # Criando um grupo de sprites
 sprites = pygame.sprite.Group()
@@ -203,7 +223,8 @@ while estado == INICIO:
     ultimotempo.append(tempo)
     pygame.display.update()
 
-pygame.time.set_timer(APARECE_QUEIJO, tempo_respawn_queijo) # Adicionar um queijo a cada X tempo
+pygame.time.set_timer(APARECE_QUEIJO, tempo_respawn_queijo) # Adicionar um queijo a cada tempo_respawn_queijo (ms) tempo
+pygame.time.set_timer(APARECE_GATO, tempo_respawn_gato) # Adicionar um queijo a cada tempo_respawn_queijo (ms) tempo
 
 # ===== Loop principal =====
 while game:
@@ -215,6 +236,9 @@ while game:
         # ----- Verifica consequências
         if event.type == APARECE_QUEIJO:
             queijos = respawnoqueijo(estado, queijos)
+
+        if event.type == APARECE_GATO:
+            enemies = respawnogato(estado, enemies)
         
         if event.type == pygame.QUIT:
             game = False
