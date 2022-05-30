@@ -52,25 +52,6 @@ IMG5 = pygame.image.load('assets\cat.png').convert_alpha()
 IMG5 = pygame.transform.scale(IMG5, (CAT_WIDTH, CAT_HEIGHT))
 background = pygame.image.load('assets\planodefundo.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
-
-# def message_new_round():
-#     clock = pygame.time.Clock()
-#     counter, text = 5, '5'.rjust(3)
-#     pygame.time.set_timer(pygame.USEREVENT, 1000)
-#     font = pygame.font.SysFont('Consolas', 15)
-#     window.blit(font.render('A vovó te pegou. Você tem mais {0} vida(s)'.format(player.vida), True, YELLOW), (100, 100))
-#     run = True
-#     while run:
-#         for e in pygame.event.get():
-#             if e.type == pygame.USEREVENT: 
-#                 counter -= 1
-#                 text = str(counter).rjust(3) if counter > 0 else 'Vamos lá'
-#             if e.type == pygame.QUIT: 
-#                 run = False
-
-#         window.blit(font.render(text, True, YELLOW), (150, 150))
-#         pygame.display.flip()
-#         clock.tick(5)
                     
 # ----- Inicia estruturas de dados
 class jogador(pygame.sprite.Sprite):
@@ -83,8 +64,9 @@ class jogador(pygame.sprite.Sprite):
         self.rect.bottom = HEIGHT - 40
         self.speedx = 0
         self.speedy = 0
-        self.pontos = 0
+        self.moedas = 0
         self.queijos = 0
+        self.pontos = 0
 
     def update(self):
         self.rect.x += self.speedx
@@ -160,13 +142,20 @@ def respawnoqueijo(state, grupoqueijos):
     grupoqueijos.add(queijos)
     return grupoqueijos
 
-def respawnogato(state, enemies_cat):
-    # if state != TROCA_ROUND:
-    NovoInimigo = inimigo(IMG5)
-    NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
-    NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
-    enemies_cat.add(NovoInimigo)
-    return enemies
+def respawnogato(enemies_gato):
+    while True:
+        NovoInimigo = inimigo(IMG5)
+        NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
+        NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
+        manobra = pygame.sprite.Group()
+        manobra.add(NovoInimigo)
+        print("tentou")
+        if not pygame.sprite.spritecollide(player, manobra, True):
+            enemies_gato.add(NovoInimigo)
+            print('spawnou')
+            break
+        manobra = pygame.sprite.Group()    
+    return enemies_gato
 
 game = True
 
@@ -183,10 +172,8 @@ FPS = 60
 vel_padrao_rato = 5
 vel_padrao_vovo = 3
 ultimotempo = [0]
-ultimotempoqueijo = [0]
 ultimotempogato = [0]
-tempo_respawn_queijo = 10000 # A cada 10 segundos
-tempo_respawn_gato = 5000 # A cada 20 segundos
+tempo_respawn_gato = 5000 # A cada 5 segundos
 
 # Criando um grupo de sprites
 sprites = pygame.sprite.Group()
@@ -224,7 +211,6 @@ while estado == INICIO:
     window.blit(IMGINICIAL, (0, 0))
     ultimotempo.append(tempo)
     ultimotempogato.append(tempo)
-    ultimotempoqueijo.append(tempo)
     pygame.display.update()
 
 # ===== Loop principal =====
@@ -235,37 +221,31 @@ while game:
     # ----- Trata eventos
     for event in pygame.event.get():
         # ----- Verifica consequências
-        print(tempo-ultimotempogato[-1])
-        if tempo-ultimotempoqueijo[-1] > tempo_respawn_queijo and len(queijos)<1:
-            ultimotempoqueijo.append(tempo)
+        if len(queijos) < 1:
             queijo = coin(IMG4)
             queijos.add(queijo)
 
         if tempo-ultimotempogato[-1] > tempo_respawn_gato:
             ultimotempogato.append(tempo)
-            enemies_cat = respawnogato(estado, enemies_cat)
+            enemies_cat = respawnogato(enemies_cat)
             pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, 200)
 
         if event.type == ALTERA_MOVIMENTO_GATO:
-            first = True
             for gato in enemies_cat:
-                if first != True:
-                    direita_esquerda = random.randint(0,2)
-                    cima_baixo = random.randint(0,2)
-                    if direita_esquerda == 1:
-                        gato.speedx += vel_padrao_vovo
-                    if direita_esquerda == 2:
-                        gato.speedx -= vel_padrao_vovo
-                    if direita_esquerda == 0:
-                        gato.speedx = 0
-                    if cima_baixo == 1:
-                        gato.speedy += vel_padrao_vovo
-                    if cima_baixo == 2:
-                        gato.speedy -= vel_padrao_vovo
-                    if cima_baixo == 0:
-                        gato.speedy = 0
-                else:
-                    first = False
+                direita_esquerda = random.randint(0,2)
+                cima_baixo = random.randint(0,2)
+                if direita_esquerda == 1:
+                    gato.speedx = vel_padrao_vovo
+                if direita_esquerda == 2:
+                    gato.speedx = -vel_padrao_vovo
+                if direita_esquerda == 0:
+                    gato.speedx = 0
+                if cima_baixo == 1:
+                    gato.speedy = vel_padrao_vovo
+                if cima_baixo == 2:
+                    gato.speedy = -vel_padrao_vovo
+                if cima_baixo == 0:
+                    gato.speedy = 0
         
         if event.type == pygame.QUIT:
             game = False
@@ -282,7 +262,6 @@ while game:
             tempo = pygame.time.get_ticks()
             ultimotempo.append(tempo)
             ultimotempogato.append(tempo)
-            ultimotempoqueijo.append(tempo)
             A = 0
             D = 0
             W = 0
@@ -349,7 +328,8 @@ while game:
     
     sprites.update()
     enemies.update()
-    pontuacao = font.render('Pontos: {0}'.format(player.pontos), True, YELLOW)
+    enemies_cat.update()
+    pontuacao = font.render('Pontos: {0}'.format(player.moedas), True, YELLOW)
     display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, YELLOW)
     texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, YELLOW)
 
@@ -357,8 +337,6 @@ while game:
         # ATENÇÃO !!! SE O RATO MORRE EM CIMA DO SPAWN DA VOVO, O JOGO EXPLODE
         estado = TROCA_ROUND
 
-        enemies_cat = ''
-        enemies = ''
         enemies_cat = pygame.sprite.Group()
         enemies = pygame.sprite.Group()
         queijos = pygame.sprite.Group()
@@ -367,14 +345,14 @@ while game:
         enemies.add(vovo)
         
         sprites.add(player)
-        #message_new_round()
 
-    if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha ponto e cria uma nova moeda
-        player.pontos += 50
+    if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha moeda e cria uma nova moeda
+        player.moedas += 1
         moedas = respawnamoedas(estado, moedas)
 
-    if pygame.sprite.spritecollide(player, queijos, True): #Se colisao com queijo -> ganha ponto e cria uma nova moeda
+    if pygame.sprite.spritecollide(player, queijos, True): #Se colisao com queijo -> ganha queijo e cria uma nova moeda
         player.queijos += 1
+        queijos = respawnoqueijo(estado, queijos)
 
     # ----- Gera saídas
     if estado == JOGANDO:
