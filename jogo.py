@@ -161,11 +161,11 @@ def respawnoqueijo(state, grupoqueijos):
     return grupoqueijos
 
 def respawnogato(state, enemies_cat):
-    if state != TROCA_ROUND:
-        NovoInimigo = inimigo(IMG5)
-        NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
-        NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
-        enemies_cat.add(NovoInimigo)
+    # if state != TROCA_ROUND:
+    NovoInimigo = inimigo(IMG5)
+    NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
+    NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
+    enemies_cat.add(NovoInimigo)
     return enemies
 
 game = True
@@ -174,8 +174,6 @@ INICIO = 0
 JOGANDO = 1
 TROCA_ROUND = 2
 FIM = 3
-APARECE_QUEIJO = 100
-APARECE_GATO = 666
 ALTERA_MOVIMENTO_GATO = 667
 
 estado = INICIO
@@ -185,8 +183,10 @@ FPS = 60
 vel_padrao_rato = 5
 vel_padrao_vovo = 3
 ultimotempo = [0]
-tempo_respawn_queijo = 10000 #A cada 10 segundos
-tempo_respawn_gato = 60000 #A cada 60 segundos
+ultimotempoqueijo = [0]
+ultimotempogato = [0]
+tempo_respawn_queijo = 10000 # A cada 10 segundos
+tempo_respawn_gato = 5000 # A cada 20 segundos
 
 # Criando um grupo de sprites
 sprites = pygame.sprite.Group()
@@ -201,7 +201,6 @@ vovo = inimigo(IMG2)
 sprites.add(player)
 enemies.add(vovo)
 moedas = respawnamoedas(estado, moedas)
-queijos = respawnoqueijo(estado, queijos)
 
 Left = 0
 Right = 0
@@ -224,10 +223,9 @@ while estado == INICIO:
             game = False
     window.blit(IMGINICIAL, (0, 0))
     ultimotempo.append(tempo)
+    ultimotempogato.append(tempo)
+    ultimotempoqueijo.append(tempo)
     pygame.display.update()
-
-pygame.time.set_timer(APARECE_QUEIJO, tempo_respawn_queijo) # Adicionar um queijo a cada tempo_respawn_queijo (ms) tempo
-pygame.time.set_timer(APARECE_GATO, tempo_respawn_gato) # Adicionar um queijo a cada tempo_respawn_queijo (ms) tempo
 
 # ===== Loop principal =====
 while game:
@@ -237,10 +235,14 @@ while game:
     # ----- Trata eventos
     for event in pygame.event.get():
         # ----- Verifica consequências
-        if event.type == APARECE_QUEIJO:
-            queijos = respawnoqueijo(estado, queijos)
+        print(tempo-ultimotempogato[-1])
+        if tempo-ultimotempoqueijo[-1] > tempo_respawn_queijo and len(queijos)<1:
+            ultimotempoqueijo.append(tempo)
+            queijo = coin(IMG4)
+            queijos.add(queijo)
 
-        if event.type == APARECE_GATO:
+        if tempo-ultimotempogato[-1] > tempo_respawn_gato:
+            ultimotempogato.append(tempo)
             enemies_cat = respawnogato(estado, enemies_cat)
             pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, 200)
 
@@ -279,6 +281,8 @@ while game:
             pygame.time.delay(2000)
             tempo = pygame.time.get_ticks()
             ultimotempo.append(tempo)
+            ultimotempogato.append(tempo)
+            ultimotempoqueijo.append(tempo)
             A = 0
             D = 0
             W = 0
@@ -286,7 +290,6 @@ while game:
             player.rect.centerx = WIDTH/2
             player.rect.bottom = HEIGHT - 40
             moedas = respawnamoedas(estado, moedas)
-            queijos = respawnoqueijo(estado, queijos)
 
             estado = JOGANDO
         
