@@ -61,6 +61,7 @@ cat_sound = pygame.mixer.Sound('assets/gato-som.mp3')
 coin_sound = pygame.mixer.Sound('assets/coin.mp3')
 cheese_sound = pygame.mixer.Sound('assets/crunch_sound.mp3')
 caught_sound = pygame.mixer.Sound('assets/rat-sound.mp3')
+risada_sound = pygame.mixer.Sound('assets/vovo-rindo.mp3')
                     
 # ----- Inicia estruturas de dados
 class jogador(pygame.sprite.Sprite):
@@ -92,7 +93,7 @@ class jogador(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
 
 class inimigo(pygame.sprite.Sprite):
-    def __init__(self, img, cat_sound):
+    def __init__(self, img, cat_sound, riso_sound):
         pygame.sprite.Sprite.__init__(self)
 
         self.image = img
@@ -102,6 +103,7 @@ class inimigo(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
         self.cat_sound = cat_sound
+        self.vovo_sound = riso_sound
 
     def update(self):
         self.rect.x += self.speedx
@@ -161,7 +163,7 @@ def respawnoqueijo(state, grupoqueijos):
 
 def respawnogato(enemies_gato):
     while True:
-        NovoInimigo = inimigo(IMG5,cat_sound)
+        NovoInimigo = inimigo(IMG5,cat_sound, '')
         NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
         NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
         NovoInimigo.cat_sound.play()
@@ -203,7 +205,7 @@ totalmoedas = 3
 # Criando o jogador
 player = jogador(IMG,caught_sound)
 
-vovo = inimigo(IMG2,'')
+vovo = inimigo(IMG2,'', risada_sound)
 vovo.rect.x = random.randint(60, WIDTH-60)
 
 perto = True
@@ -243,6 +245,7 @@ while estado == INICIO:
 
 
 musica_fundo = False
+colisao = False
 # ===== Loop principal =====
 while game:
     clock.tick(FPS)
@@ -286,7 +289,6 @@ while game:
                     gato.speedy = 0
 
         if event.type == ALTERA_MOVIMENTO_VOVO:
-            print('troca posição')
             pvovo_x = vovo.rect.x
             pvovo_y = vovo.rect.y
 
@@ -419,15 +421,25 @@ while game:
     display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, YELLOW)
     texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, YELLOW)
 
-    if pygame.sprite.spritecollide(player, enemies, True) or pygame.sprite.spritecollide(player, enemies_cat, True): #Se colisao com inimigo -> morte
+    if pygame.sprite.spritecollide(player, enemies, True):
+        vovo.vovo_sound.play()
+        colisao = True
 
+
+    if pygame.sprite.spritecollide(player, enemies_cat, True):
+        player.sound_caught.play()
+        colisao = True
+
+    if colisao: #Se colisao com inimigo -> morte
+        colisao = False
+        musica_fundo = False
         estado = TROCA_ROUND
 
         enemies_cat = pygame.sprite.Group()
         enemies = pygame.sprite.Group()
         queijos = pygame.sprite.Group()
 
-        vovo = inimigo(IMG2,'')
+        vovo = inimigo(IMG2,'', risada_sound)
 
         perto = True
         while(perto):
@@ -440,8 +452,7 @@ while game:
         
         sprites.add(player)
 
-        player.sound_caught.play()
-        musica_fundo = False
+        
 
     if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha moeda e cria uma nova moeda
         player.moedas += 1
