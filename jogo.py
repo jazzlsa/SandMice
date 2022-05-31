@@ -381,7 +381,37 @@ while game:
                     vovo.speedy -= vel_padrao_vovo
                     S -= 1
             '''
-    
+
+        if estado == JOGANDO:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT and Left == 0:
+                    player.speedx -= vel_padrao_rato
+                    Left += 1
+                if event.key == pygame.K_RIGHT and Right == 0:
+                    player.speedx += vel_padrao_rato
+                    Right += 1
+                if event.key == pygame.K_UP and Up == 0:
+                    player.speedy -= vel_padrao_rato
+                    Up += 1
+                if event.key == pygame.K_DOWN and Down == 0:
+                    player.speedy += vel_padrao_rato
+                    Down += 1
+            # Verifica se soltou alguma tecla.
+            if event.type == pygame.KEYUP:
+                # Dependendo da tecla, altera a velocidade.
+                if event.key == pygame.K_LEFT and Left == 1:
+                    player.speedx += vel_padrao_rato
+                    Left -= 1
+                if event.key == pygame.K_RIGHT and Right == 1:
+                    player.speedx -= vel_padrao_rato
+                    Right -= 1
+                if event.key == pygame.K_UP and Up == 1:
+                    player.speedy += vel_padrao_rato
+                    Up -= 1
+                if event.key == pygame.K_DOWN and Down == 1:
+                    player.speedy -= vel_padrao_rato
+                    Down -= 1
+                
     sprites.update()
     enemies.update()
     enemies_cat.update()
