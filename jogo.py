@@ -181,13 +181,14 @@ JOGANDO = 1
 TROCA_ROUND = 2
 FIM = 3
 ALTERA_MOVIMENTO_GATO = 667
+ALTERA_MOVIMENTO_VOVO = 666
 
 estado = INICIO
 # Variável para o ajuste de velocidade
 clock = pygame.time.Clock()
 FPS = 60
 vel_padrao_rato = 5
-vel_padrao_vovo = 3
+vel_padrao_vovo = 2
 ultimotempo = [0]
 ultimotempogato = [0]
 tempo_respawn_gato = 5000 # A cada 5 segundos
@@ -255,6 +256,7 @@ while game:
             pygame.mixer.music.set_volume(1)
             pygame.mixer.music.play(loops=-1)
             musica_fundo = True
+            pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, 200)
 
         # ----- Verifica consequências
         if len(queijos) < 1:
@@ -282,6 +284,23 @@ while game:
                     gato.speedy = -vel_padrao_vovo
                 if cima_baixo == 0:
                     gato.speedy = 0
+
+        if event.type == ALTERA_MOVIMENTO_VOVO:
+            print('troca posição')
+            pvovo_x = vovo.rect.x
+            pvovo_y = vovo.rect.y
+
+            pplayer_x = player.rect.x
+            pplayer_y = player.rect.y
+    
+            if pvovo_x > pplayer_x:
+                vovo.speedx = -vel_padrao_vovo
+            if pvovo_x < pplayer_x:
+                vovo.speedx = vel_padrao_vovo
+            if pvovo_y > pplayer_y:
+                vovo.speedy = -vel_padrao_vovo
+            if pvovo_y < pplayer_y:
+                vovo.speedy = vel_padrao_vovo
         
         if event.type == pygame.QUIT:
             game = False
@@ -308,7 +327,7 @@ while game:
 
             estado = JOGANDO
         
-        if estado == JOGANDO:
+        '''if estado == JOGANDO:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and Left == 0:
                     player.speedx -= vel_padrao_rato
@@ -361,6 +380,7 @@ while game:
                 if event.key == pygame.K_s and S == 1:
                     vovo.speedy -= vel_padrao_vovo
                     S -= 1
+            '''
     
     sprites.update()
     enemies.update()
