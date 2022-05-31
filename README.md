@@ -1,7 +1,7 @@
 # Py-Game---SandMice
 
-SandMice é um rato que tem o sonho de ficar rico. Para isso ele precisa roubar o máximo de comida por 10 dias nas casas da vizinhança para vender para os ratos do bairro. SandMice precisa entrar nas casas, percorrer os corredores recolhendo comida sem ser pego pelos moradores da casa com suas vassouras, mas ele tem uma vantagem: os buracos nas paredes que o ajudam a passar de um cômodo da casa para outro sem ser visto. No décimo dia SandMice passa por seu desafio final: roubar uma casa que possui um gato que é mais rapido que os moradores, o que deixa tudo mais difícil para SandMice alcançar seu sonho. SandMice também pode comprar itens e poderes especiais no beco do ratatouille, uma loja especial para ratos. Ajude ele a se tornar o novo SandMice Musk nessa empreitada!
+SandMice é um rato que tem o sonho de ficar rico. Para isso, ele precisa roubar o máximo de queijo e dinheiro por 6 dias na casa da vovó para vender para os ratos do bairro. SandMice precisa entrar nas casas, recolher moedas e queijos sem ser pego pela vovó e pelos gatos. Os gatos surgem à medida que o tempo passa e andam aleatoriamente pela casa. A vovó segue o rato o tempo inteiro tentando encurralá-lo no meio dos gatos. Para ficar rico, é necessário que SandMice pegue pelo menos 30 moedas e 10 queijos. Os controles do rato são as setas do teclado.
 
-Jéssica Lendaw Silva de Araujo
+Jéssica Lendaw Silva de Araújo
 Raul Rangel Moraes Bezerra
 Yan Vieira Romano
