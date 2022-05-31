@@ -1,11 +1,12 @@
 # ===== Inicialização =====
 # ----- Importa e inicia pacotes
 from asyncio.windows_events import NULL
+from ssl import create_default_context
 import pygame
 import random
 
 pygame.init()
-
+pygame.mixer.init() 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED = (255,0,0)
@@ -52,10 +53,18 @@ IMG5 = pygame.image.load('assets\cat.png').convert_alpha()
 IMG5 = pygame.transform.scale(IMG5, (CAT_WIDTH, CAT_HEIGHT))
 background = pygame.image.load('assets\planodefundo.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
+
+# Carrega os sons do jogo
+pygame.mixer.music.load('assets/intro-jogo.mp3')
+pygame.mixer.music.set_volume(1)
+cat_sound = pygame.mixer.Sound('assets/gato-som.mp3')
+coin_sound = pygame.mixer.Sound('assets/coin.mp3')
+cheese_sound = pygame.mixer.Sound('assets/crunch_sound.mp3')
+caught_sound = pygame.mixer.Sound('assets/rat-sound.mp3')
                     
 # ----- Inicia estruturas de dados
 class jogador(pygame.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, img, sound):
         pygame.sprite.Sprite.__init__(self)
 
         self.image = img
@@ -67,6 +76,7 @@ class jogador(pygame.sprite.Sprite):
         self.moedas = 0
         self.queijos = 0
         self.pontos = 0
+        self.sound_caught = sound
 
     def update(self):
         self.rect.x += self.speedx
@@ -82,7 +92,7 @@ class jogador(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
 
 class inimigo(pygame.sprite.Sprite):
-    def __init__(self, img):
+    def __init__(self, img, cat_sound):
         pygame.sprite.Sprite.__init__(self)
 
         self.image = img
@@ -91,6 +101,7 @@ class inimigo(pygame.sprite.Sprite):
         self.rect.bottom = 0 + 100
         self.speedx = 0
         self.speedy = 0
+        self.cat_sound = cat_sound
 
     def update(self):
         self.rect.x += self.speedx
@@ -106,7 +117,7 @@ class inimigo(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
 
 class coin(pygame.sprite.Sprite):
-    def __init__(self,img):
+    def __init__(self,img, sound):
         pygame.sprite.Sprite.__init__(self)
         
         self.image = img
@@ -115,6 +126,7 @@ class coin(pygame.sprite.Sprite):
         self.rect.bottom = random.randint(COIN_HEIGHT, HEIGHT - COIN_HEIGHT)
         self.speedx = 0
         self.speedy = 0
+        self.coin_sound = sound
 
 class cheese(pygame.sprite.Sprite):
     def __init__(self,img):
@@ -129,35 +141,40 @@ class cheese(pygame.sprite.Sprite):
 
 def respawnamoedas(state, grupomoedas):
     if state == TROCA_ROUND:
+        grupomoedas = ''
         grupomoedas = pygame.sprite.Group()
     while len(grupomoedas) < totalmoedas:
-        moeda = coin(IMG3)
+        moeda = coin(IMG3,coin_sound)
         grupomoedas.add(moeda)
+    if state != INICIO and state != TROCA_ROUND:
+        moeda.coin_sound.play()
     return grupomoedas
 
 def respawnoqueijo(state, grupoqueijos):
     if state == TROCA_ROUND:
         grupoqueijos = pygame.sprite.Group()
-    queijos = coin(IMG4)
+    queijos = coin(IMG4,cheese_sound)
     grupoqueijos.add(queijos)
+    if state != INICIO and state != TROCA_ROUND:
+        queijos.coin_sound.play()
     return grupoqueijos
 
 def respawnogato(enemies_gato):
     while True:
-        NovoInimigo = inimigo(IMG5)
+        NovoInimigo = inimigo(IMG5,cat_sound)
         NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
         NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
+        NovoInimigo.cat_sound.play()
         manobra = pygame.sprite.Group()
         manobra.add(NovoInimigo)
-        print("tentou")
         if not pygame.sprite.spritecollide(player, manobra, True):
             enemies_gato.add(NovoInimigo)
-            print('spawnou')
             break
-        manobra = pygame.sprite.Group()    
+        manobra = pygame.sprite.Group()  
     return enemies_gato
 
 game = True
+pygame.mixer.music.play(loops=-1) # Inicia música de introdução
 
 INICIO = 0
 JOGANDO = 1
@@ -183,8 +200,18 @@ moedas = pygame.sprite.Group()
 queijos = pygame.sprite.Group()
 totalmoedas = 3
 # Criando o jogador
-player = jogador(IMG)
-vovo = inimigo(IMG2)
+player = jogador(IMG,caught_sound)
+
+vovo = inimigo(IMG2,'')
+vovo.rect.x = random.randint(60, WIDTH-60)
+
+perto = True
+while(perto):
+    x_enemy = random.randint(60, WIDTH-60)
+    if((x_enemy > (player.rect.x + 200)) or (x_enemy < (player.rect.x - 200))):
+        perto = False
+vovo.rect.x = x_enemy
+
 sprites.add(player)
 enemies.add(vovo)
 moedas = respawnamoedas(estado, moedas)
@@ -213,6 +240,8 @@ while estado == INICIO:
     ultimotempogato.append(tempo)
     pygame.display.update()
 
+
+musica_fundo = False
 # ===== Loop principal =====
 while game:
     clock.tick(FPS)
@@ -220,9 +249,16 @@ while game:
 
     # ----- Trata eventos
     for event in pygame.event.get():
+
+        if(musica_fundo == False):
+            pygame.mixer.music.load('assets/musica-jogo.mp3')
+            pygame.mixer.music.set_volume(1)
+            pygame.mixer.music.play(loops=-1)
+            musica_fundo = True
+
         # ----- Verifica consequências
         if len(queijos) < 1:
-            queijo = coin(IMG4)
+            queijo = coin(IMG4,cheese_sound)
             queijos.add(queijo)
 
         if tempo-ultimotempogato[-1] > tempo_respawn_gato:
@@ -334,17 +370,28 @@ while game:
     texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, YELLOW)
 
     if pygame.sprite.spritecollide(player, enemies, True) or pygame.sprite.spritecollide(player, enemies_cat, True): #Se colisao com inimigo -> morte
-        # ATENÇÃO !!! SE O RATO MORRE EM CIMA DO SPAWN DA VOVO, O JOGO EXPLODE
+
         estado = TROCA_ROUND
 
         enemies_cat = pygame.sprite.Group()
         enemies = pygame.sprite.Group()
         queijos = pygame.sprite.Group()
 
-        vovo = inimigo(IMG2)
+        vovo = inimigo(IMG2,'')
+
+        perto = True
+        while(perto):
+            x_enemy = random.randint(60, WIDTH-60)
+            if((x_enemy > (player.rect.x + 200)) or (x_enemy < (player.rect.x - 200))):
+                perto = False
+        vovo.rect.x = x_enemy
+
         enemies.add(vovo)
         
         sprites.add(player)
+
+        player.sound_caught.play()
+        musica_fundo = False
 
     if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha moeda e cria uma nova moeda
         player.moedas += 1
