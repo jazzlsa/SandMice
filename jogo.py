@@ -40,8 +40,9 @@ IMGFINAL = pygame.image.load('assets\SandMiceFinal.png').convert()
 IMG = pygame.image.load('assets\mouse-face.png').convert_alpha()
 IMG = pygame.transform.scale(IMG, (IMG_WIDTH, IMG_HEIGHT))
 #Player 2 - Inimigo
-IMG2 = pygame.image.load('assets\grandma.png').convert_alpha()
-IMG2 = pygame.transform.scale(IMG2, (ENEMY_WIDTH, ENEMY_HEIGHT))
+GRANDMA_IMG = pygame.image.load('assets\grandma.png').convert_alpha()
+GRANDMA_RIGTH = pygame.transform.scale(GRANDMA_IMG, (ENEMY_WIDTH, ENEMY_HEIGHT))
+GRANDMA_LEFT = pygame.transform.flip(GRANDMA_RIGTH, True, False)
 #Moeda
 IMG3 = pygame.image.load('assets\coin.png').convert_alpha()
 IMG3 = pygame.transform.scale(IMG3, (COIN_WIDTH, COIN_HEIGHT))
@@ -49,8 +50,9 @@ IMG3 = pygame.transform.scale(IMG3, (COIN_WIDTH, COIN_HEIGHT))
 IMG4 = pygame.image.load('assets\cheese.png').convert_alpha()
 IMG4 = pygame.transform.scale(IMG4, (COIN_WIDTH, COIN_HEIGHT))
 #Gato Inimigo
-IMG5 = pygame.image.load('assets\cat.png').convert_alpha()
-IMG5 = pygame.transform.scale(IMG5, (CAT_WIDTH, CAT_HEIGHT))
+CAT_IMG = pygame.image.load('assets\cat.png').convert_alpha()
+CAT_RIGTH = pygame.transform.scale(CAT_IMG, (CAT_WIDTH, CAT_HEIGHT))
+CAT_LEFT = pygame.transform.flip(CAT_RIGTH, True, False)
 background = pygame.image.load('assets\planodefundo.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
 
@@ -93,10 +95,11 @@ class jogador(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
 
 class inimigo(pygame.sprite.Sprite):
-    def __init__(self, img, cat_sound, riso_sound):
+    def __init__(self, imgs, cat_sound, riso_sound):
         pygame.sprite.Sprite.__init__(self)
 
-        self.image = img
+        self.images = imgs
+        self.image = imgs[0]
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
         self.rect.bottom = 0 + 100
@@ -108,6 +111,16 @@ class inimigo(pygame.sprite.Sprite):
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
+        i = 0
+        if self.speedx < 0:
+            i = 1
+        elif self.speedx > 0:
+            i = 0
+
+        c = self.rect.center
+        self.image = self.images[i]
+        self.rect = self.image.get_rect()
+        self.rect.center = c
 
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
@@ -163,7 +176,7 @@ def respawnoqueijo(state, grupoqueijos):
 
 def respawnogato(enemies_gato):
     while True:
-        NovoInimigo = inimigo(IMG5,cat_sound, '')
+        NovoInimigo = inimigo([CAT_RIGTH, CAT_LEFT],cat_sound, '')
         NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
         NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
         NovoInimigo.cat_sound.play()
@@ -205,7 +218,7 @@ totalmoedas = 3
 # Criando o jogador
 player = jogador(IMG,caught_sound)
 
-vovo = inimigo(IMG2,'', risada_sound)
+vovo = inimigo([GRANDMA_RIGTH, GRANDMA_LEFT],'', risada_sound)
 vovo.rect.x = random.randint(60, WIDTH-60)
 
 perto = True
@@ -297,6 +310,7 @@ while game:
     
             if pvovo_x > pplayer_x:
                 vovo.speedx = -vel_padrao_vovo
+
             if pvovo_x < pplayer_x:
                 vovo.speedx = vel_padrao_vovo
             if pvovo_y > pplayer_y:
@@ -439,7 +453,7 @@ while game:
         enemies = pygame.sprite.Group()
         queijos = pygame.sprite.Group()
 
-        vovo = inimigo(IMG2,'', risada_sound)
+        vovo = inimigo([GRANDMA_RIGTH, GRANDMA_LEFT],'', risada_sound)
 
         perto = True
         while(perto):
