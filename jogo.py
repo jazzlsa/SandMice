@@ -15,7 +15,7 @@ BLUE = (0,0,255)
 YELLOW = (255, 255, 0)
 
 # ----- Gera tela principal
-WIDTH, HEIGHT = 720, 720
+WIDTH, HEIGHT = 672, 672
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Teste')
 
