@@ -15,7 +15,7 @@ BLUE = (0,0,255)
 YELLOW = (255, 255, 0)
 
 # ----- Gera tela principal
-WIDTH, HEIGHT = 640, 640
+WIDTH, HEIGHT = 720, 720
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Teste')
 
@@ -51,7 +51,7 @@ IMG4 = pygame.transform.scale(IMG4, (COIN_WIDTH, COIN_HEIGHT))
 #Gato Inimigo
 IMG5 = pygame.image.load('assets\cat.png').convert_alpha()
 IMG5 = pygame.transform.scale(IMG5, (CAT_WIDTH, CAT_HEIGHT))
-background = pygame.image.load('assets\planodefundo.png').convert()
+background = pygame.image.load('assets\chao2.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
 
 # Carrega os sons do jogo
@@ -69,6 +69,7 @@ class jogador(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.image = img
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
         self.rect.bottom = HEIGHT - 40
@@ -97,6 +98,7 @@ class inimigo(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.image = img
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH/2
         self.rect.bottom = 0 + 100
@@ -421,12 +423,12 @@ while game:
     display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, YELLOW)
     texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, YELLOW)
 
-    if pygame.sprite.spritecollide(player, enemies, True):
+    if pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_mask):
         vovo.vovo_sound.play()
         colisao = True
 
 
-    if pygame.sprite.spritecollide(player, enemies_cat, True):
+    if pygame.sprite.spritecollide(player, enemies_cat, True, pygame.sprite.collide_mask):
         player.sound_caught.play()
         colisao = True
 
