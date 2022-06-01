@@ -14,10 +14,14 @@ GREEN = (0,255,0)
 BLUE = (0,0,255)
 YELLOW = (255, 255, 0)
 
+#muda o ícone do jogo 
+pygame_icon = pygame.image.load('assets/mouse-face.png')
+pygame.display.set_icon(pygame_icon)
+
 # ----- Gera tela principal
 WIDTH, HEIGHT = 672, 672
 window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('Teste')
+pygame.display.set_caption('SandMice')
 
 # ----- Inicia assets
 IMG_WIDTH = 50
@@ -61,7 +65,7 @@ background = pygame.transform.scale(background, (WIDTH,HEIGHT))
 
 # Carrega os sons do jogo
 pygame.mixer.music.load('assets/intro-jogo.mp3')
-pygame.mixer.music.set_volume(1)
+pygame.mixer.music.set_volume(0.5)
 cat_sound = pygame.mixer.Sound('assets/gato-som.mp3')
 coin_sound = pygame.mixer.Sound('assets/coin.mp3')
 cheese_sound = pygame.mixer.Sound('assets/crunch_sound.mp3')
@@ -166,7 +170,10 @@ def respawnamoedas(state, grupomoedas):
         moeda = coin(IMG3,coin_sound)
         grupomoedas.add(moeda)
     if state != INICIO and state != TROCA_ROUND:
+        coin_sound.set_volume(0.1)
         moeda.coin_sound.play()
+        
+        
     return grupomoedas
 
 def respawnoqueijo(state, grupoqueijos):
@@ -183,6 +190,7 @@ def respawnogato(enemies_gato):
         NovoInimigo = inimigo([CAT_RIGTH, CAT_LEFT],cat_sound, '')
         NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
         NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
+        cat_sound.set_volume(0.3)
         NovoInimigo.cat_sound.play()
         manobra = pygame.sprite.Group()
         manobra.add(NovoInimigo)
@@ -273,10 +281,10 @@ while game:
 
         if(musica_fundo == False):
             pygame.mixer.music.load('assets/musica-jogo.mp3')
-            pygame.mixer.music.set_volume(1)
+            pygame.mixer.music.set_volume(0.4)
             pygame.mixer.music.play(loops=-1)
             musica_fundo = True
-            pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, 200)
+            pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, 100)
 
         # ----- Verifica consequências
         if len(queijos) < 1:
@@ -286,7 +294,7 @@ while game:
         if tempo-ultimotempogato[-1] > tempo_respawn_gato:
             ultimotempogato.append(tempo)
             enemies_cat = respawnogato(enemies_cat)
-            pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, 200)
+            pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, 500)
 
         if event.type == ALTERA_MOVIMENTO_GATO:
             for gato in enemies_cat:
@@ -440,6 +448,7 @@ while game:
     texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, YELLOW)
 
     if pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_mask):
+        risada_sound.set_volume(3)
         vovo.vovo_sound.play()
         colisao = True
 
