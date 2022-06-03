@@ -15,7 +15,7 @@ BLUE = (0,0,255)
 YELLOW = (255, 255, 0)
 
 #muda o ícone do jogo 
-pygame_icon = pygame.image.load('assets/mouse-face.png')
+pygame_icon = pygame.image.load('assets/imagens/mouse-face.png')
 pygame.display.set_icon(pygame_icon)
 
 # ----- Gera tela principal
@@ -38,39 +38,38 @@ CAT_HEIGHT = 60
 
 font = pygame.font.SysFont(None, 48)
 #Telas iniciais e finais
-IMGINICIAL = pygame.image.load('assets\SandMice.png').convert()
-IMGFINAL = pygame.image.load('assets\SandMiceFinal.png').convert()
+IMGINICIAL = pygame.image.load('assets/imagens/SandMice.png').convert()
 #Player 1 - Rato
-IMG = pygame.image.load('assets\mouse-face.png').convert_alpha()
+IMG = pygame.image.load('assets/imagens/mouse-face.png').convert_alpha()
 IMG = pygame.transform.scale(IMG, (IMG_WIDTH, IMG_HEIGHT))
 #Player 2 - Inimigo
-GRANDMA_IMG = pygame.image.load('assets\grandma.png').convert_alpha()
+GRANDMA_IMG = pygame.image.load('assets/imagens/grandma.png').convert_alpha()
 GRANDMA_RIGTH = pygame.transform.scale(GRANDMA_IMG, (ENEMY_WIDTH, ENEMY_HEIGHT))
 GRANDMA_LEFT = pygame.transform.flip(GRANDMA_RIGTH, True, False)
 #Moeda
-IMG3 = pygame.image.load('assets\coin.png').convert_alpha()
+IMG3 = pygame.image.load('assets/imagens/coin.png').convert_alpha()
 IMG3 = pygame.transform.scale(IMG3, (COIN_WIDTH, COIN_HEIGHT))
 #Queijo
-IMG4 = pygame.image.load('assets\cheese.png').convert_alpha()
+IMG4 = pygame.image.load('assets/imagens/cheese.png').convert_alpha()
 IMG4 = pygame.transform.scale(IMG4, (COIN_WIDTH, COIN_HEIGHT))
 #Gato Inimigo
-CAT_IMG = pygame.image.load('assets\cat.png').convert_alpha()
+CAT_IMG = pygame.image.load('assets/imagens/cat.png').convert_alpha()
 CAT_RIGTH = pygame.transform.scale(CAT_IMG, (CAT_WIDTH, CAT_HEIGHT))
 CAT_LEFT = pygame.transform.flip(CAT_RIGTH, True, False)
-background = pygame.image.load('assets\planodefundo.png').convert()
-IMG5 = pygame.image.load('assets\cat.png').convert_alpha()
+# background = pygame.image.load('assets/imagens/planodefundo.png').convert()
+IMG5 = pygame.image.load('assets/imagens/cat.png').convert_alpha()
 IMG5 = pygame.transform.scale(IMG5, (CAT_WIDTH, CAT_HEIGHT))
-background = pygame.image.load('assets\chao2.png').convert()
+background = pygame.image.load('assets/imagens/chao2.png').convert()
 background = pygame.transform.scale(background, (WIDTH,HEIGHT))
 
 # Carrega os sons do jogo
-pygame.mixer.music.load('assets/intro-jogo.mp3')
+pygame.mixer.music.load('assets/sons/intro-jogo.mp3')
 pygame.mixer.music.set_volume(0.5)
-cat_sound = pygame.mixer.Sound('assets/gato-som.mp3')
-coin_sound = pygame.mixer.Sound('assets/coin.mp3')
-cheese_sound = pygame.mixer.Sound('assets/crunch_sound.mp3')
-caught_sound = pygame.mixer.Sound('assets/rat-sound.mp3')
-risada_sound = pygame.mixer.Sound('assets/vovo-rindo.mp3')
+cat_sound = pygame.mixer.Sound('assets/sons/gato-som.mp3')
+coin_sound = pygame.mixer.Sound('assets/sons/coin.mp3')
+cheese_sound = pygame.mixer.Sound('assets/sons/crunch_sound.mp3')
+caught_sound = pygame.mixer.Sound('assets/sons/rat-sound.mp3')
+risada_sound = pygame.mixer.Sound('assets/sons/vovo-rindo.mp3')
                     
 # ----- Inicia estruturas de dados
 class jogador(pygame.sprite.Sprite):
@@ -280,7 +279,7 @@ while game:
     for event in pygame.event.get():
 
         if(musica_fundo == False):
-            pygame.mixer.music.load('assets/musica-jogo.mp3')
+            pygame.mixer.music.load('assets/sons/musica-jogo.mp3')
             pygame.mixer.music.set_volume(0.4)
             pygame.mixer.music.play(loops=-1)
             musica_fundo = True
@@ -354,61 +353,6 @@ while game:
             moedas = respawnamoedas(estado, moedas)
 
             estado = JOGANDO
-        
-        '''if estado == JOGANDO:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT and Left == 0:
-                    player.speedx -= vel_padrao_rato
-                    Left += 1
-                if event.key == pygame.K_RIGHT and Right == 0:
-                    player.speedx += vel_padrao_rato
-                    Right += 1
-                if event.key == pygame.K_UP and Up == 0:
-                    player.speedy -= vel_padrao_rato
-                    Up += 1
-                if event.key == pygame.K_DOWN and Down == 0:
-                    player.speedy += vel_padrao_rato
-                    Down += 1
-                if event.key == pygame.K_a and A == 0:
-                    vovo.speedx -= vel_padrao_vovo
-                    A += 1
-                if event.key == pygame.K_d and D == 0:
-                    vovo.speedx += vel_padrao_vovo
-                    D += 1
-                if event.key == pygame.K_w and W == 0:
-                    vovo.speedy -= vel_padrao_vovo
-                    W += 1
-                if event.key == pygame.K_s and S == 0:
-                    vovo.speedy += vel_padrao_vovo
-                    S += 1
-            # Verifica se soltou alguma tecla.
-            if event.type == pygame.KEYUP:
-                # Dependendo da tecla, altera a velocidade.
-                if event.key == pygame.K_LEFT and Left == 1:
-                    player.speedx += vel_padrao_rato
-                    Left -= 1
-                if event.key == pygame.K_RIGHT and Right == 1:
-                    player.speedx -= vel_padrao_rato
-                    Right -= 1
-                if event.key == pygame.K_UP and Up == 1:
-                    player.speedy += vel_padrao_rato
-                    Up -= 1
-                if event.key == pygame.K_DOWN and Down == 1:
-                    player.speedy -= vel_padrao_rato
-                    Down -= 1
-                if event.key == pygame.K_a and A == 1:
-                    vovo.speedx += vel_padrao_vovo
-                    A -= 1
-                if event.key == pygame.K_d and D == 1:
-                    vovo.speedx -= vel_padrao_vovo
-                    D -= 1
-                if event.key == pygame.K_w and W == 1:
-                    vovo.speedy += vel_padrao_vovo
-                    W -= 1
-                if event.key == pygame.K_s and S == 1:
-                    vovo.speedy -= vel_padrao_vovo
-                    S -= 1
-            '''
 
         if estado == JOGANDO:
             if event.type == pygame.KEYDOWN:
