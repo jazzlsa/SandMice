@@ -29,9 +29,11 @@ def gamescreen(window):
     # background = pygame.image.load('assets/imagens/planodefundo.png').convert()
     IMG5 = pygame.image.load('assets/imagens/cat.png').convert_alpha()
     IMG5 = pygame.transform.scale(IMG5, (CAT_WIDTH, CAT_HEIGHT))
-    background = pygame.image.load('assets/imagens/chao2.png').convert()
+    background = pygame.image.load('assets/imagens/fundo.png').convert()
     background = pygame.transform.scale(background, (WIDTH,HEIGHT))
+    #móveis
 
+    
     # Carrega os sons do jogo
     pygame.mixer.music.load('assets/sons/intro-jogo.mp3')
     pygame.mixer.music.set_volume(0.5)
@@ -120,11 +122,11 @@ def gamescreen(window):
         if((x_enemy > (player.rect.x + 200)) or (x_enemy < (player.rect.x - 200))):
             perto = False
     vovo.rect.x = x_enemy
-
+    
     sprites.add(player)
     enemies.add(vovo)
     moedas = respawnamoedas(estado, moedas)
-
+    
     Left = 0
     Right = 0
     Up = 0
@@ -285,9 +287,9 @@ def gamescreen(window):
         sprites.update()
         enemies.update()
         enemies_cat.update()
-        pontuacao = font.render('Pontos: {0}'.format(player.moedas), True, YELLOW)
-        display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, YELLOW)
-        texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, YELLOW)
+        pontuacao = font.render('Pontos: {0}'.format(player.moedas), True, RED)
+        display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, RED)
+        texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, RED)
 
         if pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_mask):
             risada_sound.set_volume(3)
@@ -335,6 +337,7 @@ def gamescreen(window):
         if estado == JOGANDO:
 
             window.blit(background,(0,0)) # Coloca o background
+            
 
             sprites.draw(window)
             enemies.draw(window)
