@@ -29,7 +29,7 @@ def gamescreen(window):
     # background = pygame.image.load('assets/imagens/planodefundo.png').convert()
     IMG5 = pygame.image.load('assets/imagens/cat.png').convert_alpha()
     IMG5 = pygame.transform.scale(IMG5, (CAT_WIDTH, CAT_HEIGHT))
-    background = pygame.image.load('assets/imagens/fundo.png').convert()
+    background = pygame.image.load('assets/imagens/fundo2.png').convert()
     background = pygame.transform.scale(background, (WIDTH,HEIGHT))
     #móveis
 
@@ -86,10 +86,7 @@ def gamescreen(window):
     game = True
     pygame.mixer.music.play(loops=-1) # Inicia música de introdução
 
-    INICIO = 0
-    JOGANDO = 1
-    TROCA_ROUND = 2
-    FIM = 3
+    INICIO, JOGANDO, TROCA_ROUND, FIM = 0, 1, 2, 3
     ALTERA_MOVIMENTO_GATO = 667
     ALTERA_MOVIMENTO_VOVO = 666
 
@@ -244,10 +241,7 @@ def gamescreen(window):
                 tempo = pygame.time.get_ticks()
                 ultimotempo.append(tempo)
                 ultimotempogato.append(tempo)
-                A = 0
-                D = 0
-                W = 0
-                S = 0
+                
                 player.rect.centerx = WIDTH/2
                 player.rect.bottom = HEIGHT - 40
                 moedas = respawnamoedas(estado, moedas)
