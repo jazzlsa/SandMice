@@ -7,6 +7,8 @@ def gamescreen(window):
     font = pygame.font.SysFont(None, 48)
     #Telas iniciais e finais
     IMGINICIAL = pygame.image.load('assets/imagens/SandMice.png').convert()
+    IMGAMEOVER = pygame.image.load('assets/imagens/gameover.png').convert()
+    IMGVIT = pygame.image.load('assets/imagens/vitoria.png')
     #Player 1 - Rato
     IMG = pygame.image.load('assets/imagens/mouse-face.png').convert_alpha()
     IMG = pygame.transform.scale(IMG, (IMG_WIDTH, IMG_HEIGHT))
@@ -214,6 +216,22 @@ def gamescreen(window):
 
             if estado == TROCA_ROUND: # Adicionar aqui a mudança de personagem (if numrounds<=3) e tela de fim do jogo (numrounds<=0)
                 if numrounds <= 0:
+                    if player.moedas >= 50 and player.queijos >= 30:
+                        window.blit(IMGVIT, (0,0))
+                        text_moedas = font.render(f'{player.moedas}', True, YELLOW)
+                        text_queijos = font.render(f'{player.queijos}', True, YELLOW)
+                        window.blit(text_moedas, (160, 340))
+                        window.blit(text_queijos, (160, 420))
+                        pygame.display.update()
+                        pygame.time.delay(6000)
+                    else:
+                        window.blit(IMGAMEOVER, (0,0))
+                        text_moedas = font.render(f'{player.moedas}', True, YELLOW)
+                        text_queijos = font.render(f'{player.queijos}', True, YELLOW)
+                        window.blit(text_moedas, (160, 340))
+                        window.blit(text_queijos, (160, 420))
+                        pygame.display.update()
+                        pygame.time.delay(6000)
                     pygame.quit()
                 texto_round = font.render('ROUND {0}'.format(7-numrounds), True, WHITE)
                 numrounds -= 1
