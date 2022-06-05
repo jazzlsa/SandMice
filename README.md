@@ -5,3 +5,6 @@ SandMice é um rato que tem o sonho de ficar rico. Para isso, ele precisa roubar
 Jéssica Lendaw Silva de Araújo
 Raul Rangel Moraes Bezerra
 Yan Vieira Romano
+
+fontes:
+imagem de fundo adaptada de https://br.pinterest.com/emilyjin545/pixel-art/
