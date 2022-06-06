@@ -2,37 +2,12 @@ import pygame
 from assets.dados.parametros import *
 import random
 from classes import *
+from assets.dados.asse import load
 
 def gamescreen(window):
     font = pygame.font.SysFont(None, 48)
     #Telas iniciais e finais
-    IMGINICIAL = pygame.image.load('assets/imagens/SandMice.png').convert()
-    IMGAMEOVER = pygame.image.load('assets/imagens/gameover.png').convert()
-    IMGVIT = pygame.image.load('assets/imagens/vitoria.png')
-    #Player 1 - Rato
-    IMG = pygame.image.load('assets/imagens/mouse-face.png').convert_alpha()
-    IMG = pygame.transform.scale(IMG, (IMG_WIDTH, IMG_HEIGHT))
-    #Player 2 - Inimigo
-    GRANDMA_IMG = pygame.image.load('assets/imagens/grandma.png').convert_alpha()
-    GRANDMA_RIGTH = pygame.transform.scale(GRANDMA_IMG, (ENEMY_WIDTH, ENEMY_HEIGHT))
-    GRANDMA_LEFT = pygame.transform.flip(GRANDMA_RIGTH, True, False)
-    #Moeda
-    IMG3 = pygame.image.load('assets/imagens/coin.png').convert_alpha()
-    IMG3 = pygame.transform.scale(IMG3, (COIN_WIDTH, COIN_HEIGHT))
-    #Queijo
-    IMG4 = pygame.image.load('assets/imagens/cheese.png').convert_alpha()
-    IMG4 = pygame.transform.scale(IMG4, (COIN_WIDTH, COIN_HEIGHT))
-    #Gato Inimigo
-    CAT_IMG = pygame.image.load('assets/imagens/cat.png').convert_alpha()
-    CAT_RIGTH = pygame.transform.scale(CAT_IMG, (CAT_WIDTH, CAT_HEIGHT))
-    CAT_LEFT = pygame.transform.flip(CAT_RIGTH, True, False)
-    # background = pygame.image.load('assets/imagens/planodefundo.png').convert()
-    IMG5 = pygame.image.load('assets/imagens/cat.png').convert_alpha()
-    IMG5 = pygame.transform.scale(IMG5, (CAT_WIDTH, CAT_HEIGHT))
-    background = pygame.image.load('assets/imagens/fundo2.png').convert()
-    background = pygame.transform.scale(background, (WIDTH,HEIGHT))
-    #móveis
-
+    asse = load()
     
     # Carrega os sons do jogo
     pygame.mixer.music.load('assets/sons/intro-jogo.mp3')
@@ -50,7 +25,7 @@ def gamescreen(window):
             grupomoedas = ''
             grupomoedas = pygame.sprite.Group()
         while len(grupomoedas) < totalmoedas:
-            moeda = coin(IMG3,coin_sound)
+            moeda = coin(asse['IMG3'],coin_sound)
             grupomoedas.add(moeda)
         if state != INICIO and state != TROCA_ROUND:
             coin_sound.set_volume(0.1)
@@ -62,7 +37,7 @@ def gamescreen(window):
     def respawnoqueijo(state, grupoqueijos):
         if state == TROCA_ROUND:
             grupoqueijos = pygame.sprite.Group()
-        queijos = coin(IMG4,cheese_sound)
+        queijos = coin(asse['IMG4'],cheese_sound)
         grupoqueijos.add(queijos)
         if state != INICIO and state != TROCA_ROUND:
             queijos.coin_sound.play()
@@ -70,7 +45,7 @@ def gamescreen(window):
 
     def respawnogato(enemies_gato):
         while True:
-            NovoInimigo = inimigo([CAT_RIGTH, CAT_LEFT],cat_sound, '')
+            NovoInimigo = inimigo([asse['CAT_RIGTH'], asse['CAT_LEFT']],cat_sound, '')
             NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
             NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
             cat_sound.set_volume(0.3)
@@ -108,9 +83,9 @@ def gamescreen(window):
     queijos = pygame.sprite.Group()
     totalmoedas = 3
     # Criando o jogador
-    player = jogador(IMG,caught_sound)
+    player = jogador(asse['IMG'],caught_sound)
 
-    vovo = inimigo([GRANDMA_RIGTH, GRANDMA_LEFT],'', risada_sound)
+    vovo = inimigo([asse['GRANDMA_RIGTH'], asse['GRANDMA_LEFT']],'', risada_sound)
     vovo.rect.x = random.randint(60, WIDTH-60)
 
     perto = True
@@ -143,7 +118,7 @@ def gamescreen(window):
             if event.type == pygame.QUIT:
                 estado = FIM
                 game = False
-        window.blit(IMGINICIAL, (0, 0))
+        window.blit(asse['IMGINICIAL'], (0, 0))
         ultimotempo.append(tempo)
         ultimotempogato.append(tempo)
         pygame.display.update()
@@ -168,7 +143,7 @@ def gamescreen(window):
 
             # ----- Verifica consequências
             if len(queijos) < 1:
-                queijo = coin(IMG4,cheese_sound)
+                queijo = coin(asse['IMG4'],cheese_sound)
                 queijos.add(queijo)
 
             if tempo-ultimotempogato[-1] > tempo_respawn_gato:
@@ -216,7 +191,7 @@ def gamescreen(window):
             if estado == TROCA_ROUND: # Adicionar aqui a mudança de personagem (if numrounds<=3) e tela de fim do jogo (numrounds<=0)
                 if numrounds <= 0:
                     if player.moedas >= 50 and player.queijos >= 30:
-                        window.blit(IMGVIT, (0,0))
+                        window.blit(asse['IMGVIT'], (0,0))
                         text_moedas = font.render(f'{player.moedas}', True, YELLOW)
                         text_queijos = font.render(f'{player.queijos}', True, YELLOW)
                         window.blit(text_moedas, (160, 340))
@@ -224,7 +199,7 @@ def gamescreen(window):
                         pygame.display.update()
                         pygame.time.delay(6000)
                     else:
-                        window.blit(IMGAMEOVER, (0,0))
+                        window.blit(asse['IMGAMEOVER'], (0,0))
                         text_moedas = font.render(f'{player.moedas}', True, YELLOW)
                         text_queijos = font.render(f'{player.queijos}', True, YELLOW)
                         window.blit(text_moedas, (160, 340))
@@ -304,7 +279,7 @@ def gamescreen(window):
             enemies = pygame.sprite.Group()
             queijos = pygame.sprite.Group()
 
-            vovo = inimigo([GRANDMA_RIGTH, GRANDMA_LEFT],'', risada_sound)
+            vovo = inimigo([asse['GRANDMA_RIGTH'], asse['GRANDMA_LEFT']],'', risada_sound)
 
             perto = True
             while(perto):
@@ -330,14 +305,14 @@ def gamescreen(window):
         # ----- Gera saídas
         if estado == JOGANDO:
 
-            window.blit(background,(0,0)) # Coloca o background
+            window.blit(asse['background'],(0,0)) # Coloca o asse['background']
             
-
+            moedas.draw(window)
+            queijos.draw(window)
             sprites.draw(window)
             enemies.draw(window)
             enemies_cat.draw(window)
-            moedas.draw(window)
-            queijos.draw(window)
+            
             window.blit(pontuacao, (490, 570))
             window.blit(display_queijos, (490, 610))
             window.blit(texto_tempo, (10, 600))
