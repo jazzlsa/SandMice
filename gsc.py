@@ -209,21 +209,22 @@ def gamescreen(window):
                             window.blit(text_moedas, (160, 420))
                             pygame.display.update()
                     game = False
-                texto_round = font.render('ROUND {0}'.format(7-numrounds), True, WHITE)
-                numrounds -= 1
-                window.fill(BLACK)
-                window.blit(texto_round, (WIDTH/2-70,HEIGHT/2-70))
-                pygame.display.update()
-                pygame.time.delay(2000)
-                tempo = pygame.time.get_ticks()
-                ultimotempo.append(tempo)
-                ultimotempogato.append(tempo)
-                
-                player.rect.centerx = WIDTH/2
-                player.rect.bottom = HEIGHT - 40
-                moedas = respawnamoedas(estado, moedas)
+                else:
+                    texto_round = font.render('ROUND {0}'.format(7-numrounds), True, WHITE)
+                    numrounds -= 1
+                    window.fill(BLACK)
+                    window.blit(texto_round, (WIDTH/2-70,HEIGHT/2-70))
+                    pygame.display.update()
+                    pygame.time.delay(2000)
+                    tempo = pygame.time.get_ticks()
+                    ultimotempo.append(tempo)
+                    ultimotempogato.append(tempo)
+                    
+                    player.rect.centerx = WIDTH/2
+                    player.rect.bottom = HEIGHT - 40
+                    moedas = respawnamoedas(estado, moedas)
 
-                estado = JOGANDO
+                    estado = JOGANDO
 
             if estado == JOGANDO:
                 if event.type == pygame.KEYDOWN:
