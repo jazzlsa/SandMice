@@ -281,9 +281,9 @@ def gamescreen(window):
         sprites.update()
         enemies.update()
         enemies_cat.update()
-        pontuacao = font.render('Pontos: {0}'.format(player.moedas), True, RED)
-        display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, RED)
-        texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, RED)
+        pontuacao = font.render('Pontos: {0}'.format(player.moedas), True, BLACK)
+        display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, BLACK)
+        texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, BLACK)
 
         if pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_mask):
             risada_sound.set_volume(3)
@@ -338,8 +338,8 @@ def gamescreen(window):
             enemies_cat.draw(window)
             moedas.draw(window)
             queijos.draw(window)
-            window.blit(pontuacao, (10, 10))
-            window.blit(display_queijos, (10, 40))
+            window.blit(pontuacao, (490, 570))
+            window.blit(display_queijos, (490, 610))
             window.blit(texto_tempo, (10, 600))
 
         # ----- Atualiza estado do jogo
