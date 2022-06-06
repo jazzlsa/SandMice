@@ -190,23 +190,25 @@ def gamescreen(window):
 
             if estado == TROCA_ROUND: # Adicionar aqui a mudança de personagem (if numrounds<=3) e tela de fim do jogo (numrounds<=0)
                 if numrounds <= 0:
-                    if player.moedas >= 50 and player.queijos >= 30:
-                        window.blit(asse['IMGVIT'], (0,0))
-                        text_moedas = font.render(f'{player.moedas}', True, YELLOW)
-                        text_queijos = font.render(f'{player.queijos}', True, YELLOW)
-                        window.blit(text_moedas, (160, 340))
-                        window.blit(text_queijos, (160, 420))
-                        pygame.display.update()
-                        pygame.time.delay(6000)
-                    else:
-                        window.blit(asse['IMGAMEOVER'], (0,0))
-                        text_moedas = font.render(f'{player.moedas}', True, YELLOW)
-                        text_queijos = font.render(f'{player.queijos}', True, YELLOW)
-                        window.blit(text_moedas, (160, 340))
-                        window.blit(text_queijos, (160, 420))
-                        pygame.display.update()
-                        pygame.time.delay(6000)
-                    pygame.quit()
+                    segundos = 0
+                    while segundos <= 5:
+                        clock.tick(FPS)
+                        segundos += 1/FPS
+                        if player.moedas >= 50 and player.queijos >= 30:
+                            window.blit(asse['IMGVIT'], (0,0))
+                            text_moedas = font.render(f'{player.moedas}', True, YELLOW)
+                            text_queijos = font.render(f'{player.queijos}', True, YELLOW)
+                            window.blit(text_queijos, (160, 340))
+                            window.blit(text_moedas, (160, 420))
+                            pygame.display.update()
+                        else:
+                            window.blit(asse['IMGAMEOVER'], (0,0))
+                            text_moedas = font.render(f'{player.moedas}', True, YELLOW)
+                            text_queijos = font.render(f'{player.queijos}', True, YELLOW)
+                            window.blit(text_queijos, (160, 340))
+                            window.blit(text_moedas, (160, 420))
+                            pygame.display.update()
+                    game = False
                 texto_round = font.render('ROUND {0}'.format(7-numrounds), True, WHITE)
                 numrounds -= 1
                 window.fill(BLACK)
@@ -313,9 +315,9 @@ def gamescreen(window):
             enemies.draw(window)
             enemies_cat.draw(window)
             
-            window.blit(pontuacao, (490, 570))
-            window.blit(display_queijos, (490, 610))
-            window.blit(texto_tempo, (10, 600))
+            window.blit(pontuacao, (230, 630))
+            window.blit(display_queijos, (450, 630))
+            window.blit(texto_tempo, (10, 630))
 
         # ----- Atualiza estado do jogo
         pygame.display.update()  # Mostra o novo frame para o jogador

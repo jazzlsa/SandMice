@@ -26,6 +26,6 @@ def load():
     # background = pygame.image.load('assets/imagens/planodefundo.png').convert()
     asse['IMG5'] = pygame.image.load('assets/imagens/cat.png').convert_alpha()
     asse['IMG5'] = pygame.transform.scale(asse['IMG5'], (CAT_WIDTH, CAT_HEIGHT))
-    asse['background'] = pygame.image.load('assets/imagens/fundo.png').convert()
+    asse['background'] = pygame.image.load('assets/imagens/fundo3.png').convert()
     asse['background'] = pygame.transform.scale(asse['background'], (WIDTH,HEIGHT))
     return asse

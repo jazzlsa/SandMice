@@ -28,8 +28,8 @@ class jogador(pygame.sprite.Sprite):
                 self.rect.left = 0
             if self.rect.top < 73:
                 self.rect.top = 73
-            if self.rect.bottom > HEIGHT:
-                self.rect.bottom = HEIGHT
+            if self.rect.bottom > 615:
+                self.rect.bottom =615
 
 class inimigo(pygame.sprite.Sprite):
     def __init__(self, imgs, cat_sound, riso_sound):
@@ -65,8 +65,8 @@ class inimigo(pygame.sprite.Sprite):
             self.rect.left = 0
         if self.rect.top < 73:
             self.rect.top = 73
-        if self.rect.bottom > HEIGHT:
-            self.rect.bottom = HEIGHT
+        if self.rect.bottom > 615:
+            self.rect.bottom = 615
 
 class coin(pygame.sprite.Sprite):
     def __init__(self,img, sound):
@@ -75,7 +75,7 @@ class coin(pygame.sprite.Sprite):
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.centerx = random.randint(COIN_WIDTH, WIDTH - COIN_WIDTH)
-        self.rect.bottom = random.randint(COIN_HEIGHT+73, HEIGHT - COIN_HEIGHT)
+        self.rect.bottom = random.randint(COIN_HEIGHT+73, 615 - COIN_HEIGHT)
         self.speedx = 0
         self.speedy = 0
         self.coin_sound = sound
@@ -87,7 +87,7 @@ class cheese(pygame.sprite.Sprite):
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.centerx = random.randint(CHEESE_WIDTH, WIDTH - CHEESE_WIDTH)
-        self.rect.bottom = random.randint(CHEESE_HEIGHT+73, HEIGHT - CHEESE_HEIGHT)
+        self.rect.bottom = random.randint(CHEESE_HEIGHT+73, 615 - CHEESE_HEIGHT)
         self.speedx = 0
         self.speedy = 0
 
