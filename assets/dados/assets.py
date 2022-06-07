@@ -30,6 +30,21 @@ def load():
     dicionary_assets['IMAGE_BACKGROUND'] = pygame.image.load('assets/imagens/fundo3.png').convert()
     dicionary_assets['IMAGE_BACKGROUND'] = pygame.transform.scale(dicionary_assets['IMAGE_BACKGROUND'], (SCREEN_WIDTH,SCREEN_HEIGHT))
     
+    # Música de fundo da introdução
+    dicionary_assets['SOUND_BACKGROUND_INTRO'] = 'assets/sons/intro-jogo.mp3'
+    # Música de fundo do jogo
+    dicionary_assets['SOUND_BACKGROUND'] = 'assets/sons/musica-jogo.mp3'
+    # Som do gato
+    dicionary_assets['SOUND_CAT'] = pygame.mixer.Sound('assets/sons/gato-som.mp3')
+    # Som da moeda
+    dicionary_assets['SOUND_COIN'] = pygame.mixer.Sound('assets/sons/coin.mp3')
+    # Som do queijo
+    dicionary_assets['SOUND_CHEESE'] = pygame.mixer.Sound('assets/sons/crunch_sound.mp3')
+    # Som do jogador
+    dicionary_assets['SOUND_MOUSE'] = pygame.mixer.Sound('assets/sons/rat-sound.mp3')
+    # Som da vovó
+    dicionary_assets['SOUND_GRANDMA'] = pygame.mixer.Sound('assets/sons/vovo-rindo.mp3')
+    
     return dicionary_assets
 
 # Define as imagens e nome da tela
