@@ -46,8 +46,11 @@ def load():
     # Som da vovó
     dicionary_assets['SOUND_GRANDMA'] = pygame.mixer.Sound('assets/sons/vovo-rindo.mp3')
 
+    # Configurando o volume da moeda
     dicionary_assets['SOUND_COIN'].set_volume(EFFECTS_VOLUME_COIN)
+    # Configurando o volume da gato
     dicionary_assets['SOUND_CAT'].set_volume(EFFECTS_VOLUME_CAT)
+    # Configurando o volume da vovó
     dicionary_assets['SOUND_GRANDMA'].set_volume(EFFECTS_VOLUME_GRANDMA)
 
     # Fonte do Jogo

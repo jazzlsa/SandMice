@@ -12,24 +12,24 @@ def gamescreen(window):
     # Instancia a fonte padrão do jogo
     font = dicionary_assets['FONT_GAME']
     
-    def respawnamoedas(status, coin_group):
+    def respawnNoItem(status, item_group, type_item):
+        item = {}
         if status == TROCA_ROUND:
-            coin_group = pygame.sprite.Group()
-        while len(coin_group) < QUANTITY_COINS_PER_ROUND:
-            moeda = coin(dicionary_assets['IMAGE_COIN'],dicionary_assets['SOUND_COIN'])
-            coin_group.add(moeda)
+            item_group = pygame.sprite.Group()
+        if(type_item == 'moeda'):
+            item['max_quantity'] = QUANTITY_COINS_PER_ROUND
+            item['image'] = dicionary_assets['IMAGE_COIN']
+            item['sound'] = dicionary_assets['SOUND_COIN']
+        if(type_item == 'queijo'):
+            item['max_quantity'] = QUANTITY_CHEESES_PER_ROUND
+            item['image'] = dicionary_assets['IMAGE_CHEESE']
+            item['sound'] = dicionary_assets['SOUND_CHEESE']
+        while len(item_group) < item['max_quantity']:
+            new_item = coin(item['image'],item['sound'])
+            item_group.add(new_item)
         if status != INICIO and status != TROCA_ROUND:
-            moeda.coin_sound.play()
-        return coin_group
-
-    def respawnoqueijo(state, grupoqueijos):
-        if state == TROCA_ROUND:
-            grupoqueijos = pygame.sprite.Group()
-        queijos = coin(dicionary_assets['IMAGE_CHEESE'],dicionary_assets['SOUND_CHEESE'])
-        grupoqueijos.add(queijos)
-        if state != INICIO and state != TROCA_ROUND:
-            queijos.coin_sound.play()
-        return grupoqueijos
+            new_item.coin_sound.play()
+        return item_group
 
     def respawnogato(enemies_gato):
         while True:
@@ -77,7 +77,8 @@ def gamescreen(window):
     
     sprites.add(player)
     enemies.add(vovo)
-    moedas = respawnamoedas(estado, moedas)
+    moedas = respawnNoItem(estado, moedas, 'moeda')
+    queijos = respawnNoItem(estado, queijos, 'queijo')
     
     Left = 0
     Right = 0
@@ -130,9 +131,6 @@ def gamescreen(window):
 
             # ----- Verifica consequências
             if estado == JOGANDO:
-                if len(queijos) < 1:
-                    queijo = coin(dicionary_assets['IMAGE_CHEESE'],dicionary_assets['SOUND_CHEESE'])
-                    queijos.add(queijo)
 
                 if tempo-ultimotempogato[-1] > tempo_respawn_gato:
                     ultimotempogato.append(tempo)
@@ -200,7 +198,7 @@ def gamescreen(window):
                     
                     player.rect.centerx = SCREEN_WIDTH/2
                     player.rect.bottom = SCREEN_HEIGHT - 40
-                    moedas = respawnamoedas(estado, moedas)
+                    moedas = respawnNoItem(estado, moedas, 'moeda')
 
                     estado = JOGANDO
 
@@ -298,11 +296,11 @@ def gamescreen(window):
 
         if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha moeda e cria uma nova moeda
             player.moedas += 1
-            moedas = respawnamoedas(estado, moedas)
+            moedas = respawnNoItem(estado, moedas, 'moeda')
 
         if pygame.sprite.spritecollide(player, queijos, True): #Se colisao com queijo -> ganha queijo e cria uma nova moeda
             player.queijos += 1
-            queijos = respawnoqueijo(estado, queijos)
+            queijos = respawnNoItem(estado, queijos, 'queijo')
 
         # ----- Gera saídas
         if estado == JOGANDO:

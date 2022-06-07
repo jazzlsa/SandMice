@@ -78,14 +78,3 @@ class coin(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
         self.coin_sound = sound
-
-class cheese(pygame.sprite.Sprite):
-    def __init__(self,img):
-        pygame.sprite.Sprite.__init__(self)
-        
-        self.image = img
-        self.rect = self.image.get_rect()
-        self.rect.centerx = random.randint(CHEESE_SIZE, SCREEN_WIDTH - CHEESE_SIZE)
-        self.rect.bottom = random.randint(CHEESE_SIZE+73, 615 - CHEESE_SIZE)
-        self.speedx = 0
-        self.speedy = 0
