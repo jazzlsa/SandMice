@@ -30,7 +30,8 @@ def gamescreen(window):
             new_item = coin(item['image'],item['sound'])
             item_group.add(new_item)
         if status != INICIO and status != TROCA_ROUND:
-            new_item.sound.play()
+            if(MUTE!=True):
+                new_item.sound.play()
         return item_group
 
     # Função de criação de novo inimigo (gato)
@@ -39,7 +40,8 @@ def gamescreen(window):
             new_enemy = inimigo([dicionary_assets['IMAGE_CAT'], dicionary_assets['IMAGE_CAT']],dicionary_assets['SOUND_CAT'])
             new_enemy.rect.centerx = random.randint(CAT_WIDTH, SCREEN_WIDTH - CAT_WIDTH)
             new_enemy.rect.bottom = random.randint(CAT_HEIGHT, SCREEN_HEIGHT - CAT_HEIGHT)
-            new_enemy.sound.play()
+            if(MUTE!=True):
+                new_enemy.sound.play()
             manobra = pygame.sprite.Group()
             manobra.add(new_enemy)
             if not pygame.sprite.spritecollide(player, manobra, True):
@@ -87,11 +89,16 @@ def gamescreen(window):
     # Toca música de fundo
     def playMusicLoop(music, volume):
         pygame.mixer.music.load(music)
-        pygame.mixer.music.set_volume(volume)
+        if(MUTE != True):
+            pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.play(loops=-1)
 
     # Variável que mantém o jogo em looping
     EXECUTAR = True
+    # Variável que define se está mudo ou não
+    MUTE = False
+    # Variável que define se está pausado ou não
+    PAUSE = False
     # Estado inicial do jogo
     estado = INICIO
     # Instanciando arrays de tempo
@@ -128,7 +135,8 @@ def gamescreen(window):
     while EXECUTAR:
         # Fica calculando o tempo e os FPS do jogo
         clock.tick(FPS)
-        tempo = pygame.time.get_ticks()
+        if(PAUSE == False):
+            tempo = pygame.time.get_ticks()
 
         # Trata os estados do jogo
         for event in pygame.event.get():
@@ -162,13 +170,13 @@ def gamescreen(window):
             if estado == JOGANDO:
 
                 # Dá respawn no gato
-                if tempo-last_time_cat[-1] > TIME_RESPAWN_CAT:
+                if tempo-last_time_cat[-1] > TIME_RESPAWN_CAT and PAUSE == False:
                     last_time_cat.append(tempo)
                     enemies_cat_group = respawnCat(enemies_cat_group)
                     pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, CHANGE_MOVIMENT_CAT)
 
                 # Altera o movimento aleatório do gato
-                if event.type == ALTERA_MOVIMENTO_GATO:
+                if event.type == ALTERA_MOVIMENTO_GATO and PAUSE == False:
                     for gato in enemies_cat_group:
                         direita_esquerda = random.randint(0,2)
                         cima_baixo = random.randint(0,2)
@@ -186,7 +194,7 @@ def gamescreen(window):
                             gato.speedy = 0
                 
                 # Altera o movimento da vovó para seguir o jogador
-                if event.type == ALTERA_MOVIMENTO_VOVO:
+                if event.type == ALTERA_MOVIMENTO_VOVO and PAUSE == False:
                     pvovo_x = vovo.rect.x
                     pvovo_y = vovo.rect.y
                     pplayer_x = player.rect.x
@@ -202,7 +210,7 @@ def gamescreen(window):
                         vovo.speedy = SPEED_ENEMIES
                 
                 # Altera o movimento do jogador de acordo com a tecla pressionada ou solta
-                if event.type == pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN and PAUSE == False:
                     if event.key == pygame.K_LEFT and Left == 0:
                         player.speedx -= SPEED_PLAYER
                         Left += 1
@@ -217,7 +225,7 @@ def gamescreen(window):
                         Down += 1
 
                 # Verifica se soltou alguma tecla.
-                if event.type == pygame.KEYUP:
+                if event.type == pygame.KEYUP and PAUSE == False:
                     if event.key == pygame.K_LEFT and Left == 1:
                         player.speedx += SPEED_PLAYER
                         Left -= 1
@@ -230,6 +238,27 @@ def gamescreen(window):
                     if event.key == pygame.K_DOWN and Down == 1:
                         player.speedy -= SPEED_PLAYER
                         Down -= 1
+
+                # Verifica se está ou não mutado, tirando ou voltando o som
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_m:
+                        if(MUTE):
+                            pygame.mixer.music.set_volume(BACKGROUND_VOLUME)
+                            MUTE = False
+                        else:    
+                            pygame.mixer.music.set_volume(0)
+                            MUTE = True
+
+                # Verifica se está pausado o jogo, pausando ou não
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_p:
+                        if(PAUSE):
+                            PAUSE = False
+                        else:
+                            PAUSE = True
+                            vovo.speedx,vovo.speedy,player.speedy,player.speedx = 0,0,0,0
+                            for gato in enemies_cat_group:
+                                gato.speedx,gato.speedy = 0,0
 
             # Caso o jogador tenha perdido o round mostra o próximo
             if estado == TROCA_ROUND:
@@ -284,12 +313,14 @@ def gamescreen(window):
 
         # Caso o jogador colida com a vovó
         if pygame.sprite.spritecollide(player, enemies_group, True, pygame.sprite.collide_mask):
-            vovo.sound.play()
+            if(MUTE!=True):
+                vovo.sound.play()
             colisao = True
 
         # Caso o jogador colida com o gato
         if pygame.sprite.spritecollide(player, enemies_cat_group, True, pygame.sprite.collide_mask):
-            player.sound.play()
+            if(MUTE!=True):
+                player.sound.play()
             colisao = True
 
         # Caso colisão com a vovó ou o gato seja verdadeira
