@@ -44,8 +44,13 @@ def gamescreen(window):
             if not pygame.sprite.spritecollide(player, manobra, True):
                 enemies_gato.add(new_enemy)
                 break
-            manobra = pygame.sprite.Group()  
+            manobra = pygame.sprite.Group()
         return enemies_gato
+
+    def playMusicLoop(music, volume):
+        pygame.mixer.music.load(music)
+        pygame.mixer.music.set_volume(volume)
+        pygame.mixer.music.play(loops=-1)
 
     game = True
 
@@ -89,7 +94,6 @@ def gamescreen(window):
     round = 1
     #Tela Inicial
 
-    musica_fundo = False
     colisao = False
     # ===== Loop principal =====
     while game:
@@ -99,16 +103,9 @@ def gamescreen(window):
         # ----- Trata eventos
         for event in pygame.event.get():
 
-            if(musica_fundo == False):
-                pygame.mixer.music.load(dicionary_assets['SOUND_BACKGROUND'])
-                pygame.mixer.music.set_volume(BACKGROUND_VOLUME)
-                pygame.mixer.music.play(loops=-1)
-                musica_fundo = True
-                pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, 100)
-
             if estado == INICIO:
-                pygame.mixer.music.load(dicionary_assets['SOUND_BACKGROUND_INTRO'])
-                pygame.mixer.music.play(loops=-1)
+                playMusicLoop(dicionary_assets['SOUND_BACKGROUND_INTRO'], BACKGROUND_VOLUME)
+
                 round = 1
                 Left = 0
                 Right = 0
@@ -130,7 +127,7 @@ def gamescreen(window):
                         if event.type == pygame.QUIT:
                             estado = FIM
                             game = False
-
+            
             # ----- Verifica consequências
             if estado == JOGANDO:
 
@@ -202,6 +199,7 @@ def gamescreen(window):
                     player.rect.bottom = SCREEN_HEIGHT - 40
                     moedas = respawnItem(estado, moedas, 'moeda')
                     queijos = respawnItem(estado, queijos, 'queijo')
+                    pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, 100)
 
                     estado = JOGANDO
 
@@ -268,14 +266,13 @@ def gamescreen(window):
             vovo.sound.play()
             colisao = True
 
-
         if pygame.sprite.spritecollide(player, enemies_cat, True, pygame.sprite.collide_mask):
             player.sound.play()
             colisao = True
 
         if colisao: #Se colisao com inimigo -> morte
             colisao = False
-            musica_fundo = False
+            playMusicLoop(dicionary_assets['SOUND_BACKGROUND'], BACKGROUND_VOLUME)
             estado = TROCA_ROUND
 
             enemies_cat = pygame.sprite.Group()
