@@ -1,27 +1,26 @@
+# Importa pacotes e arquivos
 import pygame
 from assets.dados.config import *
 import random
-from classes import *
+from sprites import *
 from assets.dados.assets import load
 
 def gamescreen(window):
-    font = pygame.font.SysFont(None, 48)
-    #Telas iniciais e finais
+    # Carrega arquivos do jogo
     dicionary_assets = load()
     
-    def respawnamoedas(state, grupomoedas):
-        if state == TROCA_ROUND:
-            grupomoedas = ''
-            grupomoedas = pygame.sprite.Group()
-        while len(grupomoedas) < totalmoedas:
+    # Instancia a fonte padrão do jogo
+    font = dicionary_assets['FONT_GAME']
+    
+    def respawnamoedas(status, coin_group):
+        if status == TROCA_ROUND:
+            coin_group = pygame.sprite.Group()
+        while len(coin_group) < QUANTITY_COINS_PER_ROUND:
             moeda = coin(dicionary_assets['IMAGE_COIN'],dicionary_assets['SOUND_COIN'])
-            grupomoedas.add(moeda)
-        if state != INICIO and state != TROCA_ROUND:
-            dicionary_assets['SOUND_COIN'].set_volume(EFFECTS_VOLUME_COIN)
+            coin_group.add(moeda)
+        if status != INICIO and status != TROCA_ROUND:
             moeda.coin_sound.play()
-            
-            
-        return grupomoedas
+        return coin_group
 
     def respawnoqueijo(state, grupoqueijos):
         if state == TROCA_ROUND:
@@ -37,7 +36,6 @@ def gamescreen(window):
             NovoInimigo = inimigo([dicionary_assets['IMAGE_CAT'], dicionary_assets['IMAGE_CAT']],dicionary_assets['SOUND_CAT'], '')
             NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, SCREEN_WIDTH - CAT_WIDTH)
             NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, SCREEN_HEIGHT - CAT_HEIGHT)
-            dicionary_assets['SOUND_CAT'].set_volume(EFFECTS_VOLUME_CAT)
             NovoInimigo.cat_sound.play()
             manobra = pygame.sprite.Group()
             manobra.add(NovoInimigo)
@@ -266,7 +264,6 @@ def gamescreen(window):
         texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, BLACK)
 
         if pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_mask):
-            dicionary_assets['SOUND_GRANDMA'].set_volume(EFFECTS_VOLUME_GRANDMA)
             vovo.vovo_sound.play()
             colisao = True
 

@@ -18,6 +18,7 @@ ALTERA_MOVIMENTO_VOVO   = 502
 SCREEN_WIDTH    = 672 
 SCREEN_HEIGHT   = 672
 FPS             = 60
+FONT_SIZE       = 48
 
 # Configurações dos tamanhos dos objetos no jogo
 IMG_SIZE    = 50
@@ -35,5 +36,6 @@ EFFECTS_VOLUME_GRANDMA = 1
 
 # Configurações de jogabilidade
 QUANTITY_ROUNDS = 6
+QUANTITY_COINS_PER_ROUND = 5
 SPEED_PLAYER = 5
 SPEED_ENEMIES = 2

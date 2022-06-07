@@ -4,6 +4,7 @@ from assets.dados.config import *
 # Define as imagens e áudios do jogo
 def load():
     dicionary_assets = {}
+
     # Imagem de inicialização
     dicionary_assets['START_IMAGE'] = pygame.image.load('assets/imagens/SandMice.png').convert()
     # Imagem caso o jogador perca
@@ -44,6 +45,13 @@ def load():
     dicionary_assets['SOUND_MOUSE'] = pygame.mixer.Sound('assets/sons/rat-sound.mp3')
     # Som da vovó
     dicionary_assets['SOUND_GRANDMA'] = pygame.mixer.Sound('assets/sons/vovo-rindo.mp3')
+
+    dicionary_assets['SOUND_COIN'].set_volume(EFFECTS_VOLUME_COIN)
+    dicionary_assets['SOUND_CAT'].set_volume(EFFECTS_VOLUME_CAT)
+    dicionary_assets['SOUND_GRANDMA'].set_volume(EFFECTS_VOLUME_GRANDMA)
+
+    # Fonte do Jogo
+    dicionary_assets['FONT_GAME'] = pygame.font.SysFont(None, FONT_SIZE)
     
     return dicionary_assets
 
