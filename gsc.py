@@ -154,6 +154,8 @@ def gamescreen(window):
                 player.speedy = 0
                 tempo = pygame.time.get_ticks()
                 window.blit(asse['IMGINICIAL'], (0, 0))
+                player.moedas = 0
+                player.queijos = 0
                 ultimotempo.append(tempo)
                 ultimotempogato.append(tempo)
                 pygame.display.update()

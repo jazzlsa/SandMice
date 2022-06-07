@@ -15,7 +15,6 @@ class jogador(pygame.sprite.Sprite):
             self.speedy = 0
             self.moedas = 0
             self.queijos = 0
-            self.pontos = 0
             self.sound_caught = sound
 
         def update(self):
