@@ -82,15 +82,12 @@ def gamescreen(window):
     moedas_group = respawnItem(estado, moedas_group, 'moeda')
     queijos_group = respawnItem(estado, queijos_group, 'queijo')
     
-    Left = 0
-    Right = 0
-    Up = 0
-    Down = 0
+    # Definindo variáveis para inicialização
+    Left,Right,Up,Down = 0,0,0,0
     round = 1
-    #Tela Inicial
-
     colisao = False
-    # ===== Loop principal =====
+
+    # O jogo está sendo jogado
     while game:
         clock.tick(FPS)
         tempo = pygame.time.get_ticks()
@@ -99,19 +96,15 @@ def gamescreen(window):
         for event in pygame.event.get():
 
             if estado == INICIO:
+                #Tocando a música de introdução
                 playMusicLoop(dicionary_assets['SOUND_BACKGROUND_INTRO'], BACKGROUND_VOLUME)
-
+                
+                # Definindo variáveis para inicialização
+                Left,Right,Up,Down,player.speedx,player.speedy,player.moedas,player.queijos = 0,0,0,0,0,0,0,0
                 round = 1
-                Left = 0
-                Right = 0
-                Up = 0
-                Down = 0
-                player.speedx = 0
-                player.speedy = 0
+
                 tempo = pygame.time.get_ticks()
                 window.blit(dicionary_assets['START_IMAGE'], (0, 0))
-                player.moedas = 0
-                player.queijos = 0
                 last_time.append(tempo)
                 last_time_cat.append(tempo)
                 pygame.display.update()
@@ -123,14 +116,16 @@ def gamescreen(window):
                             estado = FIM
                             game = False
             
-            # ----- Verifica consequências
+            # Caso o jogo esteja sendo jogado
             if estado == JOGANDO:
 
+                # Dá respawn no gato
                 if tempo-last_time_cat[-1] > TIME_RESPAWN_CAT:
                     last_time_cat.append(tempo)
                     enemies_cat_group = respawnCat(enemies_cat_group)
                     pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, CHANGE_MOVIMENT_CAT)
 
+                # Altera o movimento aleatório do gato
                 if event.type == ALTERA_MOVIMENTO_GATO:
                     for gato in enemies_cat_group:
                         direita_esquerda = random.randint(0,2)
@@ -147,7 +142,8 @@ def gamescreen(window):
                             gato.speedy = -SPEED_ENEMIES
                         if cima_baixo == 0:
                             gato.speedy = 0
-
+                
+                # Altera o movimento da vovó para seguir o jogador
                 if event.type == ALTERA_MOVIMENTO_VOVO:
                     pvovo_x = vovo.rect.x
                     pvovo_y = vovo.rect.y
@@ -163,19 +159,46 @@ def gamescreen(window):
                     if pvovo_y < pplayer_y:
                         vovo.speedy = SPEED_ENEMIES
                 
-            if event.type == pygame.QUIT:
-                game = False
+                # Altera o movimento do jogador de acordo com a tecla pressionada ou solta
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT and Left == 0:
+                        player.speedx -= SPEED_PLAYER
+                        Left += 1
+                    if event.key == pygame.K_RIGHT and Right == 0:
+                        player.speedx += SPEED_PLAYER
+                        Right += 1
+                    if event.key == pygame.K_UP and Up == 0:
+                        player.speedy -= SPEED_PLAYER
+                        Up += 1
+                    if event.key == pygame.K_DOWN and Down == 0:
+                        player.speedy += SPEED_PLAYER
+                        Down += 1
 
+                # Verifica se soltou alguma tecla.
+                if event.type == pygame.KEYUP:
+                    # Dependendo da tecla, altera a velocidade.
+                    if event.key == pygame.K_LEFT and Left == 1:
+                        player.speedx += SPEED_PLAYER
+                        Left -= 1
+                    if event.key == pygame.K_RIGHT and Right == 1:
+                        player.speedx -= SPEED_PLAYER
+                        Right -= 1
+                    if event.key == pygame.K_UP and Up == 1:
+                        player.speedy += SPEED_PLAYER
+                        Up -= 1
+                    if event.key == pygame.K_DOWN and Down == 1:
+                        player.speedy -= SPEED_PLAYER
+                        Down -= 1
+
+            # Caso o jogador tenha perdido o round mostra o próximo
             if estado == TROCA_ROUND:
-                pygame.mixer.music.load(dicionary_assets['SOUND_BACKGROUND'])
-                pygame.mixer.music.play(loops=-1)
+                # Tocando música de fundo
+                playMusicLoop(dicionary_assets['SOUND_BACKGROUND'], BACKGROUND_VOLUME)
                 pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, CHANGE_MOVIMENT_GRANDMA)
-                Left = 0
-                Right = 0
-                Up = 0
-                Down = 0
-                player.speedx = 0
-                player.speedy = 0
+                
+                # Definindo variáveis para inicialização do round
+                Left,Right,Up,Down,player.speedx,player.speedy = 0,0,0,0,0,0
+
                 if round > QUANTITY_ROUNDS:
                     estado = FIM
                 else:
@@ -218,36 +241,10 @@ def gamescreen(window):
                         estado = INICIO
                     if event.key == pygame.K_ESCAPE:
                         game = False
-
-            if estado == JOGANDO:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT and Left == 0:
-                        player.speedx -= SPEED_PLAYER
-                        Left += 1
-                    if event.key == pygame.K_RIGHT and Right == 0:
-                        player.speedx += SPEED_PLAYER
-                        Right += 1
-                    if event.key == pygame.K_UP and Up == 0:
-                        player.speedy -= SPEED_PLAYER
-                        Up += 1
-                    if event.key == pygame.K_DOWN and Down == 0:
-                        player.speedy += SPEED_PLAYER
-                        Down += 1
-                # Verifica se soltou alguma tecla.
-                if event.type == pygame.KEYUP:
-                    # Dependendo da tecla, altera a velocidade.
-                    if event.key == pygame.K_LEFT and Left == 1:
-                        player.speedx += SPEED_PLAYER
-                        Left -= 1
-                    if event.key == pygame.K_RIGHT and Right == 1:
-                        player.speedx -= SPEED_PLAYER
-                        Right -= 1
-                    if event.key == pygame.K_UP and Up == 1:
-                        player.speedy += SPEED_PLAYER
-                        Up -= 1
-                    if event.key == pygame.K_DOWN and Down == 1:
-                        player.speedy -= SPEED_PLAYER
-                        Down -= 1
+                
+            # Caso o evento de fechamento do pygame seja acionado
+            if event.type == pygame.QUIT:
+                game = False
                     
         player_group.update()
         enemies_group.update()
