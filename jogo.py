@@ -1,24 +1,31 @@
-# ===== Inicialização =====
-# ----- Importa e inicia pacotes
+# Importa pacotes e arquivos
 from asyncio.windows_events import NULL
 from ssl import create_default_context
 import pygame
 from assets.dados.parametros import *
 from gsc import *
+from assets.dados.assets import loadScreen
 
+# Instancia a classe pygame
 pygame.init()
 pygame.mixer.init() 
 
-#muda o ícone do jogo 
-pygame_icon = pygame.image.load('assets/imagens/mouse-face.png')
+# Carrega dados da tela
+screen_assets = loadScreen()
+
+# Configura o ícone da tela
+pygame_icon = screen_assets['ICON_SCREEN']
 pygame.display.set_icon(pygame_icon)
 
-# ----- Gera tela principal
-window = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('SandMice')
+# Configura o nome da tela
+pygame.display.set_caption(screen_assets['NAME'])
 
-#inicia o jogo
+# Configura o tamanho da tela
+window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+# Gera a tela
 gamescreen(window)
 
+# Sai do jogo
 pygame.quit()
 quit()

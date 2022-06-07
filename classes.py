@@ -9,8 +9,8 @@ class jogador(pygame.sprite.Sprite):
             self.image = img
             self.mask = pygame.mask.from_surface(self.image)
             self.rect = self.image.get_rect()
-            self.rect.centerx = WIDTH/2
-            self.rect.bottom = HEIGHT - 40
+            self.rect.centerx = SCREEN_WIDTH/2
+            self.rect.bottom = SCREEN_HEIGHT - 40
             self.speedx = 0
             self.speedy = 0
             self.moedas = 0
@@ -21,8 +21,8 @@ class jogador(pygame.sprite.Sprite):
             self.rect.x += self.speedx
             self.rect.y += self.speedy
 
-            if self.rect.right > WIDTH:
-                self.rect.right = WIDTH
+            if self.rect.right > SCREEN_WIDTH:
+                self.rect.right = SCREEN_WIDTH
             if self.rect.left < 0:
                 self.rect.left = 0
             if self.rect.top < 73:
@@ -37,7 +37,7 @@ class inimigo(pygame.sprite.Sprite):
         self.image = imgs[0]
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIDTH/2
+        self.rect.centerx = SCREEN_WIDTH/2
         self.rect.bottom = 0 + 100
         self.speedx = 0
         self.speedy = 0
@@ -58,8 +58,8 @@ class inimigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = c
 
-        if self.rect.right > WIDTH:
-            self.rect.right = WIDTH
+        if self.rect.right > SCREEN_WIDTH:
+            self.rect.right = SCREEN_WIDTH
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.top < 73:
@@ -73,7 +73,7 @@ class coin(pygame.sprite.Sprite):
         
         self.image = img
         self.rect = self.image.get_rect()
-        self.rect.centerx = random.randint(COIN_SIZE, WIDTH - COIN_SIZE)
+        self.rect.centerx = random.randint(COIN_SIZE, SCREEN_WIDTH - COIN_SIZE)
         self.rect.bottom = random.randint(COIN_SIZE+73, 615 - COIN_SIZE)
         self.speedx = 0
         self.speedy = 0
@@ -85,7 +85,7 @@ class cheese(pygame.sprite.Sprite):
         
         self.image = img
         self.rect = self.image.get_rect()
-        self.rect.centerx = random.randint(CHEESE_SIZE, WIDTH - CHEESE_SIZE)
+        self.rect.centerx = random.randint(CHEESE_SIZE, SCREEN_WIDTH - CHEESE_SIZE)
         self.rect.bottom = random.randint(CHEESE_SIZE+73, 615 - CHEESE_SIZE)
         self.speedx = 0
         self.speedy = 0

@@ -46,8 +46,8 @@ def gamescreen(window):
     def respawnogato(enemies_gato):
         while True:
             NovoInimigo = inimigo([dicionary_assets['IMAGE_CAT'], dicionary_assets['IMAGE_CAT']],cat_sound, '')
-            NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, WIDTH - CAT_WIDTH)
-            NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, HEIGHT - CAT_HEIGHT)
+            NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, SCREEN_WIDTH - CAT_WIDTH)
+            NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, SCREEN_HEIGHT - CAT_HEIGHT)
             cat_sound.set_volume(0.3)
             NovoInimigo.cat_sound.play()
             manobra = pygame.sprite.Group()
@@ -89,11 +89,11 @@ def gamescreen(window):
     player = jogador(dicionary_assets['IMAGE_MOUSE'],caught_sound)
 
     vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],'', risada_sound)
-    vovo.rect.x = random.randint(60, WIDTH-60)
+    vovo.rect.x = random.randint(60, SCREEN_WIDTH-60)
 
     perto = True
     while(perto):
-        x_enemy = random.randint(60, WIDTH-60)
+        x_enemy = random.randint(60, SCREEN_WIDTH-60)
         if((x_enemy > (player.rect.x + 200)) or (x_enemy < (player.rect.x - 200))):
             perto = False
     vovo.rect.x = x_enemy
@@ -228,15 +228,15 @@ def gamescreen(window):
                     texto_round = font.render('ROUND {0}'.format(7-numrounds), True, WHITE)
                     numrounds -= 1
                     window.fill(BLACK)
-                    window.blit(texto_round, (WIDTH/2-70,HEIGHT/2-70))
+                    window.blit(texto_round, (SCREEN_WIDTH/2-70,SCREEN_HEIGHT/2-70))
                     pygame.display.update()
                     pygame.time.delay(2000)
                     tempo = pygame.time.get_ticks()
                     ultimotempo.append(tempo)
                     ultimotempogato.append(tempo)
                     
-                    player.rect.centerx = WIDTH/2
-                    player.rect.bottom = HEIGHT - 40
+                    player.rect.centerx = SCREEN_WIDTH/2
+                    player.rect.bottom = SCREEN_HEIGHT - 40
                     moedas = respawnamoedas(estado, moedas)
 
                     estado = JOGANDO
@@ -323,7 +323,7 @@ def gamescreen(window):
 
             perto = True
             while(perto):
-                x_enemy = random.randint(60, WIDTH-60)
+                x_enemy = random.randint(60, SCREEN_WIDTH-60)
                 if((x_enemy > (player.rect.x + 200)) or (x_enemy < (player.rect.x - 200))):
                     perto = False
             vovo.rect.x = x_enemy

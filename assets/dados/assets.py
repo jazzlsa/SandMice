@@ -1,6 +1,7 @@
 import pygame
 from assets.dados.parametros import *
 
+# Define as imagens e áudios do jogo
 def load():
     dicionary_assets = {}
     # Imagem de inicialização
@@ -27,7 +28,15 @@ def load():
     dicionary_assets['IMAGE_CAT'] = pygame.transform.scale(dicionary_assets['IMAGE_CAT'], (CAT_WIDTH, CAT_HEIGHT))
     # Imagem do fundo
     dicionary_assets['IMAGE_BACKGROUND'] = pygame.image.load('assets/imagens/fundo3.png').convert()
-    dicionary_assets['IMAGE_BACKGROUND'] = pygame.transform.scale(dicionary_assets['IMAGE_BACKGROUND'], (WIDTH,HEIGHT))
-    
+    dicionary_assets['IMAGE_BACKGROUND'] = pygame.transform.scale(dicionary_assets['IMAGE_BACKGROUND'], (SCREEN_WIDTH,SCREEN_HEIGHT))
     
     return dicionary_assets
+
+# Define as imagens e nome da tela
+def loadScreen():
+    screen_assets = {}
+    screen_assets['ICON_SCREEN'] = pygame.image.load('assets/imagens/mouse-face.png')
+    screen_assets['ICON_SCREEN'] = pygame.transform.scale(screen_assets['ICON_SCREEN'], (SCREEN_WIDTH,SCREEN_HEIGHT))
+    screen_assets['NAME'] = 'SandMice'
+    
+    return screen_assets
