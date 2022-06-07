@@ -73,8 +73,8 @@ class coin(pygame.sprite.Sprite):
         
         self.image = img
         self.rect = self.image.get_rect()
-        self.rect.centerx = random.randint(COIN_WIDTH, WIDTH - COIN_WIDTH)
-        self.rect.bottom = random.randint(COIN_HEIGHT+73, 615 - COIN_HEIGHT)
+        self.rect.centerx = random.randint(COIN_SIZE, WIDTH - COIN_SIZE)
+        self.rect.bottom = random.randint(COIN_SIZE+73, 615 - COIN_SIZE)
         self.speedx = 0
         self.speedy = 0
         self.coin_sound = sound
@@ -85,17 +85,7 @@ class cheese(pygame.sprite.Sprite):
         
         self.image = img
         self.rect = self.image.get_rect()
-        self.rect.centerx = random.randint(CHEESE_WIDTH, WIDTH - CHEESE_WIDTH)
-        self.rect.bottom = random.randint(CHEESE_HEIGHT+73, 615 - CHEESE_HEIGHT)
+        self.rect.centerx = random.randint(CHEESE_SIZE, WIDTH - CHEESE_SIZE)
+        self.rect.bottom = random.randint(CHEESE_SIZE+73, 615 - CHEESE_SIZE)
         self.speedx = 0
         self.speedy = 0
-
-class movel(pygame.sprite.Sprite):
-    def __init__(self, img, centerx, bottom):
-        pygame.sprite.Sprite.__init__(self)
-        
-        self.image = img
-        # self.mask = pygame.mask.from_surface(self.image)
-        self.rect = self.image.get_rect()
-        self.rect.centerx = centerx
-        self.rect.bottom = bottom
