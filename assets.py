@@ -55,6 +55,7 @@ def load():
 
     # Fonte do Jogo
     dicionary_assets['FONT_GAME'] = pygame.font.SysFont(None, FONT_SIZE)
+    dicionary_assets['FONT_PEQUENA'] = pygame.font.SysFont(None, 24)
     
     return dicionary_assets
 
