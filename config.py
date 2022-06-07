@@ -1,3 +1,9 @@
+import os
+from os import path
+
+IMAGES_PATH = path.join(path.dirname(__file__), 'assets', 'imagens')
+SOUNDS_PATH = path.join(path.dirname(__file__), 'assets', 'sons')
+
 # Cores
 BLACK   = (0,0,0)
 WHITE   = (255,255,255)
@@ -28,6 +34,20 @@ CHEESE_SIZE = 30
 CAT_WIDTH   = 80
 CAT_HEIGHT  = 60
 
+# Configuração de onde mostrar o score no jogo
+DISPLAY_COINS_X     = 230
+DISPLAY_COINS_Y     = 630
+DISPLAY_CHEESE_X    = 450
+DISPLAY_CHEESE_Y    = 630
+DISLAY_TIME_X       = 10
+DISLAY_TIME_Y       = 630
+
+# Configuração de onde mostrar o score da imagem final
+FINAL_DISPLAY_COINS_X     = 160
+FINAL_DISPLAY_COINS_Y     = 420
+FINAL_DISPLAY_CHEESE_X    = 160
+FINAL_DISPLAY_CHEESE_Y    = 340
+
 # Configurações do som
 BACKGROUND_VOLUME = 0.4
 EFFECTS_VOLUME_CAT = 0.3
@@ -35,7 +55,8 @@ EFFECTS_VOLUME_COIN = 0.1
 EFFECTS_VOLUME_GRANDMA = 1
 
 # Configurações de jogabilidade
-QUANTITY_ROUNDS = 6
+DELAY_SCREEN_ROUNDS = 1000
+QUANTITY_ROUNDS = 1
 QUANTITY_COINS_PER_ROUND = 3
 QUANTITY_CHEESES_PER_ROUND = 1
 SPEED_PLAYER = 5

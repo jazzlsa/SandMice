@@ -1,9 +1,10 @@
 # Importa pacotes e arquivos
+from tokenize import String
 import pygame
-from assets.dados.config import *
+from config import *
 import random
 from sprites import *
-from assets.dados.assets import load
+from assets import load
 
 def gamescreen(window):
     # Carrega arquivos do jogo
@@ -33,7 +34,7 @@ def gamescreen(window):
         return item_group
 
     # Função de criação de novo inimigo (gato)
-    def respawnCat(enemies_gato):
+    def respawnCat(enemy_cat):
         while True:
             new_enemy = inimigo([dicionary_assets['IMAGE_CAT'], dicionary_assets['IMAGE_CAT']],dicionary_assets['SOUND_CAT'])
             new_enemy.rect.centerx = random.randint(CAT_WIDTH, SCREEN_WIDTH - CAT_WIDTH)
@@ -42,10 +43,46 @@ def gamescreen(window):
             manobra = pygame.sprite.Group()
             manobra.add(new_enemy)
             if not pygame.sprite.spritecollide(player, manobra, True):
-                enemies_gato.add(new_enemy)
+                enemy_cat.add(new_enemy)
                 break
             manobra = pygame.sprite.Group()
-        return enemies_gato
+        return enemy_cat
+
+    # Atualiza e desenha os scores na tela
+    def changeScreenScore(quantity_coins, quantity_cheese, time):
+        display_coins = font.render('Pontos: {0}'.format(quantity_coins), True, BLACK)
+        display_cheese = font.render('Queijos: {0}'.format(quantity_cheese), True, BLACK)
+        display_time = font.render('{0:.1f} s'.format((time[0] - time[1])/1000), True, BLACK)
+        window.blit(display_coins, (DISPLAY_COINS_X, DISPLAY_COINS_Y))
+        window.blit(display_cheese, (DISPLAY_CHEESE_X, DISPLAY_CHEESE_Y))
+        window.blit(display_time, (DISLAY_TIME_X, DISLAY_TIME_Y))
+        pygame.display.update()
+
+    # Desenha os Sprites na tela
+    def drawSpritesOnScreen():
+        window.blit(dicionary_assets['IMAGE_BACKGROUND'],(0,0))
+        moedas_group.draw(window)
+        queijos_group.draw(window)
+        player_group.draw(window)
+        enemies_cat_group.draw(window)
+        enemies_group.draw(window) 
+
+    # Desenha a tela de round
+    def drawSpriteRoundScreen():
+        texto_round = font.render('ROUND {0}'.format(round), True, WHITE)
+        window.fill(BLACK)
+        window.blit(texto_round, (SCREEN_WIDTH/2-70,SCREEN_HEIGHT/2-70))
+        pygame.display.update()
+        pygame.time.delay(DELAY_SCREEN_ROUNDS)
+
+    def drawFinalScreen():
+        # Mostra a quantidade de moedas e queijos e atualiza a tela
+        text_moedas = font.render(f'{player.moedas}', True, YELLOW)
+        text_queijos = font.render(f'{player.queijos}', True, YELLOW)
+        window.blit(text_queijos, (FINAL_DISPLAY_CHEESE_X, FINAL_DISPLAY_CHEESE_Y))
+        window.blit(text_moedas, (FINAL_DISPLAY_COINS_X, FINAL_DISPLAY_COINS_Y))
+        pygame.display.update()
+
 
     # Toca música de fundo
     def playMusicLoop(music, volume):
@@ -54,7 +91,7 @@ def gamescreen(window):
         pygame.mixer.music.play(loops=-1)
 
     # Variável que mantém o jogo em looping
-    game = True
+    EXECUTAR = True
     # Estado inicial do jogo
     estado = INICIO
     # Instanciando arrays de tempo
@@ -88,7 +125,7 @@ def gamescreen(window):
     colisao = False
 
     # O jogo está sendo jogado
-    while game:
+    while EXECUTAR:
         # Fica calculando o tempo e os FPS do jogo
         clock.tick(FPS)
         tempo = pygame.time.get_ticks()
@@ -115,7 +152,7 @@ def gamescreen(window):
                             estado = TROCA_ROUND
                         if event.type == pygame.QUIT:
                             estado = FIM
-                            game = False
+                            EXECUTAR = False
             
             # Caso o jogo esteja sendo jogado
             if estado == JOGANDO:
@@ -177,7 +214,6 @@ def gamescreen(window):
 
                 # Verifica se soltou alguma tecla.
                 if event.type == pygame.KEYUP:
-                    # Dependendo da tecla, altera a velocidade.
                     if event.key == pygame.K_LEFT and Left == 1:
                         player.speedx += SPEED_PLAYER
                         Left -= 1
@@ -200,25 +236,24 @@ def gamescreen(window):
                 # Definindo variáveis para inicialização do round
                 Left,Right,Up,Down,player.speedx,player.speedy = 0,0,0,0,0,0
 
-                if round > QUANTITY_ROUNDS:
-                    estado = FIM
-                else:
-                    texto_round = font.render('ROUND {0}'.format(round), True, WHITE)
+                if round <= QUANTITY_ROUNDS:
+                    drawSpriteRoundScreen()
                     round += 1
-                    window.fill(BLACK)
-                    window.blit(texto_round, (SCREEN_WIDTH/2-70,SCREEN_HEIGHT/2-70))
-                    pygame.display.update()
-                    pygame.time.delay(2000)
                     tempo = pygame.time.get_ticks()
                     last_time.append(tempo)
                     last_time_cat.append(tempo)
                     
+                    # Volta o jogador na posição inicial
                     player.rect.centerx = SCREEN_WIDTH/2
                     player.rect.bottom = SCREEN_HEIGHT - 40
+
+                    #Cria moedas e queijos para o próximo round
                     moedas_group = respawnItem(estado, moedas_group, 'moeda')
                     queijos_group = respawnItem(estado, queijos_group, 'queijo')
 
                     estado = JOGANDO
+                else:
+                    estado = FIM
                     
             # Mostra a imagem do final do jogo
             if estado == FIM:
@@ -228,33 +263,20 @@ def gamescreen(window):
                 # Caso o jogador perca
                 else:
                     window.blit(dicionary_assets['IMAGE_GAME_OVER'], (0,0))
-                
-                # Mostra a quantidade de moedas e queijos e atualiza a tela
-                text_moedas = font.render(f'{player.moedas}', True, YELLOW)
-                text_queijos = font.render(f'{player.queijos}', True, YELLOW)
-                window.blit(text_queijos, (160, 340))
-                window.blit(text_moedas, (160, 420))
-                pygame.display.update()
+
+                # Desenha a imagem final
+                drawFinalScreen()
 
                 # Verifica se a tacla de espaço ou ESC foram apertadas
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         estado = INICIO
                     if event.key == pygame.K_ESCAPE:
-                        game = False
+                        EXECUTAR = False
                 
             # Caso o evento de fechamento do pygame seja acionado
             if event.type == pygame.QUIT:
-                game = False
-        
-        # Atualiza grupos de sprites no jogo
-        player_group.update()
-        enemies_group.update()
-        enemies_cat_group.update()
-        # Atualiza a pontuação de moedas e queijos
-        display_moedas = font.render('Pontos: {0}'.format(player.moedas), True, BLACK)
-        display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, BLACK)
-        texto_tempo = font.render('{0:.1f} s'.format((tempo - last_time[-1])/1000), True, BLACK)
+                EXECUTAR = False
 
         # Caso o jogador colida com a vovó
         if pygame.sprite.spritecollide(player, enemies_group, True, pygame.sprite.collide_mask):
@@ -272,6 +294,7 @@ def gamescreen(window):
             
             # Reinicia música de fundo
             playMusicLoop(dicionary_assets['SOUND_BACKGROUND'], BACKGROUND_VOLUME)
+            
             # Muda o estado para trocar o round
             estado = TROCA_ROUND
 
@@ -283,37 +306,32 @@ def gamescreen(window):
             # Reinicia o local da vovó e reinicia a velocidade para 0
             vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],dicionary_assets['SOUND_GRANDMA'])
             vovo.rect.x = random.randint(60, SCREEN_WIDTH-60)
-            vovo.speedx = 0
-            vovo.speedy = 0
+            vovo.speedx,vovo.speedy = 0, 0
 
             # Instancia a vovó e o jogador no grupo dos sprites
             enemies_group.add(vovo)
             player_group.add(player)
-
             
-
-        if pygame.sprite.spritecollide(player, moedas_group, True): #Se colisao com moeda -> ganha moeda e cria uma nova moeda
+        # Jogador pegou uma moeda
+        if pygame.sprite.spritecollide(player, moedas_group, True):
             player.moedas += 1
             moedas_group = respawnItem(estado, moedas_group, 'moeda')
 
-        if pygame.sprite.spritecollide(player, queijos_group, True): #Se colisao com queijo -> ganha queijo e cria uma nova moeda
+        # Jogador pegou um queijo
+        if pygame.sprite.spritecollide(player, queijos_group, True):
             player.queijos += 1
             queijos_group = respawnItem(estado, queijos_group, 'queijo')
 
-        # ----- Gera saídas
+        # Atualiza o frame o jogo esteja executando
+        # Este estado está aqui porque ele indifere dos eventos do jogo
         if estado == JOGANDO:
+            drawSpritesOnScreen()
+            changeScreenScore(player.moedas, player.queijos, [tempo,last_time[-1]])
+        
+        # Atualiza grupos de sprites no jogo
+        player_group.update()
+        enemies_group.update()
+        enemies_cat_group.update()
 
-            window.blit(dicionary_assets['IMAGE_BACKGROUND'],(0,0)) # Coloca o dicionary_assets['IMAGE_BACKGROUND']
-            
-            moedas_group.draw(window)
-            queijos_group.draw(window)
-            player_group.draw(window)
-            enemies_group.draw(window)
-            enemies_cat_group.draw(window)
-            
-            window.blit(display_moedas, (230, 630))
-            window.blit(display_queijos, (450, 630))
-            window.blit(texto_tempo, (10, 630))
-
-        # ----- Atualiza estado do jogo
-        pygame.display.update()  # Mostra o novo frame para o jogador
+        # Atualiza o frame do jogo
+        pygame.display.update()

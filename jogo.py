@@ -2,9 +2,9 @@
 from asyncio.windows_events import NULL
 from ssl import create_default_context
 import pygame
-from assets.dados.config import *
+from config import *
 from gsc import *
-from assets.dados.assets import loadScreen
+from assets import loadScreen
 
 # Instancia a classe pygame
 pygame.init()
