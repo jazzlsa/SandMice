@@ -1,5 +1,5 @@
 import pygame
-from assets.dados.parametros import *
+from assets.dados.config import *
 
 # Define as imagens e áudios do jogo
 def load():

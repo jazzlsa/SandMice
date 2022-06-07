@@ -1,5 +1,5 @@
 import pygame
-from assets.dados.parametros import *
+from assets.dados.config import *
 import random
 
 class jogador(pygame.sprite.Sprite):

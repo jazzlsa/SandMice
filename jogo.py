@@ -2,7 +2,7 @@
 from asyncio.windows_events import NULL
 from ssl import create_default_context
 import pygame
-from assets.dados.parametros import *
+from assets.dados.config import *
 from gsc import *
 from assets.dados.assets import loadScreen
 
