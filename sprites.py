@@ -15,7 +15,7 @@ class jogador(pygame.sprite.Sprite):
             self.speedy = 0
             self.moedas = 0
             self.queijos = 0
-            self.sound_caught = sound
+            self.sound = sound
 
         def update(self):
             self.rect.x += self.speedx
@@ -31,7 +31,7 @@ class jogador(pygame.sprite.Sprite):
                 self.rect.bottom =615
 
 class inimigo(pygame.sprite.Sprite):
-    def __init__(self, imgs, cat_sound, riso_sound):
+    def __init__(self, imgs, sound):
         pygame.sprite.Sprite.__init__(self)
         self.images = imgs
         self.image = imgs[0]
@@ -41,8 +41,7 @@ class inimigo(pygame.sprite.Sprite):
         self.rect.bottom = 0 + 100
         self.speedx = 0
         self.speedy = 0
-        self.cat_sound = cat_sound
-        self.vovo_sound = riso_sound
+        self.sound = sound
 
     def update(self):
         self.rect.x += self.speedx
@@ -77,4 +76,4 @@ class coin(pygame.sprite.Sprite):
         self.rect.bottom = random.randint(COIN_SIZE+73, 615 - COIN_SIZE)
         self.speedx = 0
         self.speedy = 0
-        self.coin_sound = sound
+        self.sound = sound

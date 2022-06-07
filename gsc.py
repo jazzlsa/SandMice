@@ -12,7 +12,8 @@ def gamescreen(window):
     # Instancia a fonte padrão do jogo
     font = dicionary_assets['FONT_GAME']
     
-    def respawnNoItem(status, item_group, type_item):
+    # Função de criação de itens (moedas ou queijos)
+    def respawnItem(status, item_group, type_item):
         item = {}
         if status == TROCA_ROUND:
             item_group = pygame.sprite.Group()
@@ -28,19 +29,20 @@ def gamescreen(window):
             new_item = coin(item['image'],item['sound'])
             item_group.add(new_item)
         if status != INICIO and status != TROCA_ROUND:
-            new_item.coin_sound.play()
+            new_item.sound.play()
         return item_group
 
-    def respawnogato(enemies_gato):
+    # Função de criação de novo inimigo (gato)
+    def respawnCat(enemies_gato):
         while True:
-            NovoInimigo = inimigo([dicionary_assets['IMAGE_CAT'], dicionary_assets['IMAGE_CAT']],dicionary_assets['SOUND_CAT'], '')
-            NovoInimigo.rect.centerx = random.randint(CAT_WIDTH, SCREEN_WIDTH - CAT_WIDTH)
-            NovoInimigo.rect.bottom = random.randint(CAT_HEIGHT, SCREEN_HEIGHT - CAT_HEIGHT)
-            NovoInimigo.cat_sound.play()
+            new_enemy = inimigo([dicionary_assets['IMAGE_CAT'], dicionary_assets['IMAGE_CAT']],dicionary_assets['SOUND_CAT'])
+            new_enemy.rect.centerx = random.randint(CAT_WIDTH, SCREEN_WIDTH - CAT_WIDTH)
+            new_enemy.rect.bottom = random.randint(CAT_HEIGHT, SCREEN_HEIGHT - CAT_HEIGHT)
+            new_enemy.sound.play()
             manobra = pygame.sprite.Group()
-            manobra.add(NovoInimigo)
+            manobra.add(new_enemy)
             if not pygame.sprite.spritecollide(player, manobra, True):
-                enemies_gato.add(NovoInimigo)
+                enemies_gato.add(new_enemy)
                 break
             manobra = pygame.sprite.Group()  
         return enemies_gato
@@ -65,7 +67,7 @@ def gamescreen(window):
     # Criando o jogador
     player = jogador(dicionary_assets['IMAGE_MOUSE'],dicionary_assets['SOUND_MOUSE'])
 
-    vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],'', dicionary_assets['SOUND_GRANDMA'])
+    vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],dicionary_assets['SOUND_GRANDMA'])
     vovo.rect.x = random.randint(60, SCREEN_WIDTH-60)
 
     perto = True
@@ -77,8 +79,8 @@ def gamescreen(window):
     
     sprites.add(player)
     enemies.add(vovo)
-    moedas = respawnNoItem(estado, moedas, 'moeda')
-    queijos = respawnNoItem(estado, queijos, 'queijo')
+    moedas = respawnItem(estado, moedas, 'moeda')
+    queijos = respawnItem(estado, queijos, 'queijo')
     
     Left = 0
     Right = 0
@@ -134,7 +136,7 @@ def gamescreen(window):
 
                 if tempo-ultimotempogato[-1] > tempo_respawn_gato:
                     ultimotempogato.append(tempo)
-                    enemies_cat = respawnogato(enemies_cat)
+                    enemies_cat = respawnCat(enemies_cat)
                     pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, 500)
 
                 if event.type == ALTERA_MOVIMENTO_GATO:
@@ -198,7 +200,8 @@ def gamescreen(window):
                     
                     player.rect.centerx = SCREEN_WIDTH/2
                     player.rect.bottom = SCREEN_HEIGHT - 40
-                    moedas = respawnNoItem(estado, moedas, 'moeda')
+                    moedas = respawnItem(estado, moedas, 'moeda')
+                    queijos = respawnItem(estado, queijos, 'queijo')
 
                     estado = JOGANDO
 
@@ -262,12 +265,12 @@ def gamescreen(window):
         texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, BLACK)
 
         if pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_mask):
-            vovo.vovo_sound.play()
+            vovo.sound.play()
             colisao = True
 
 
         if pygame.sprite.spritecollide(player, enemies_cat, True, pygame.sprite.collide_mask):
-            player.sound_caught.play()
+            player.sound.play()
             colisao = True
 
         if colisao: #Se colisao com inimigo -> morte
@@ -279,7 +282,7 @@ def gamescreen(window):
             enemies = pygame.sprite.Group()
             queijos = pygame.sprite.Group()
 
-            vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],'', dicionary_assets['SOUND_GRANDMA'])
+            vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],dicionary_assets['SOUND_GRANDMA'])
 
             perto = True
             while(perto):
@@ -296,11 +299,11 @@ def gamescreen(window):
 
         if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha moeda e cria uma nova moeda
             player.moedas += 1
-            moedas = respawnNoItem(estado, moedas, 'moeda')
+            moedas = respawnItem(estado, moedas, 'moeda')
 
         if pygame.sprite.spritecollide(player, queijos, True): #Se colisao com queijo -> ganha queijo e cria uma nova moeda
             player.queijos += 1
-            queijos = respawnNoItem(estado, queijos, 'queijo')
+            queijos = respawnItem(estado, queijos, 'queijo')
 
         # ----- Gera saídas
         if estado == JOGANDO:
