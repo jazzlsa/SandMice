@@ -61,7 +61,10 @@ def gamescreen(window):
     game = True
     pygame.mixer.music.play(loops=-1) # Inicia música de introdução
 
-    INICIO, JOGANDO, TROCA_ROUND, FIM = 0, 1, 2, 3
+    INICIO      = 0
+    JOGANDO     = 1
+    TROCA_ROUND = 2 
+    FIM         = 3
     ALTERA_MOVIMENTO_GATO = 667
     ALTERA_MOVIMENTO_VOVO = 666
 
@@ -107,10 +110,10 @@ def gamescreen(window):
     D = 0
     W = 0
     S = 0
-    numrounds = 6
+    numrounds = 1
     #Tela Inicial
 
-    while estado == INICIO:
+    '''while estado == INICIO:
         tempo = pygame.time.get_ticks()
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -121,7 +124,7 @@ def gamescreen(window):
         window.blit(asse['IMGINICIAL'], (0, 0))
         ultimotempo.append(tempo)
         ultimotempogato.append(tempo)
-        pygame.display.update()
+        pygame.display.update()'''
 
 
     musica_fundo = False
@@ -141,74 +144,78 @@ def gamescreen(window):
                 musica_fundo = True
                 pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, 100)
 
-            # ----- Verifica consequências
-            if len(queijos) < 1:
-                queijo = coin(asse['IMG4'],cheese_sound)
-                queijos.add(queijo)
-
-            if tempo-ultimotempogato[-1] > tempo_respawn_gato:
+            if estado == INICIO:
+                numrounds = 1
+                Left = 0
+                Right = 0
+                Up = 0
+                Down = 0
+                player.speedx = 0
+                player.speedy = 0
+                tempo = pygame.time.get_ticks()
+                window.blit(asse['IMGINICIAL'], (0, 0))
+                ultimotempo.append(tempo)
                 ultimotempogato.append(tempo)
-                enemies_cat = respawnogato(enemies_cat)
-                pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, 500)
+                pygame.display.update()
+                while estado == INICIO:
+                    for event in pygame.event.get():
+                        if event.type == pygame.KEYDOWN:
+                            estado = TROCA_ROUND
+                        if event.type == pygame.QUIT:
+                            estado = FIM
+                            game = False
 
-            if event.type == ALTERA_MOVIMENTO_GATO:
-                for gato in enemies_cat:
-                    direita_esquerda = random.randint(0,2)
-                    cima_baixo = random.randint(0,2)
-                    if direita_esquerda == 1:
-                        gato.speedx = vel_padrao_vovo
-                    if direita_esquerda == 2:
-                        gato.speedx = -vel_padrao_vovo
-                    if direita_esquerda == 0:
-                        gato.speedx = 0
-                    if cima_baixo == 1:
-                        gato.speedy = vel_padrao_vovo
-                    if cima_baixo == 2:
-                        gato.speedy = -vel_padrao_vovo
-                    if cima_baixo == 0:
-                        gato.speedy = 0
+            # ----- Verifica consequências
+            if estado == JOGANDO:
+                if len(queijos) < 1:
+                    queijo = coin(asse['IMG4'],cheese_sound)
+                    queijos.add(queijo)
 
-            if event.type == ALTERA_MOVIMENTO_VOVO:
-                pvovo_x = vovo.rect.x
-                pvovo_y = vovo.rect.y
+                if tempo-ultimotempogato[-1] > tempo_respawn_gato:
+                    ultimotempogato.append(tempo)
+                    enemies_cat = respawnogato(enemies_cat)
+                    pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, 500)
 
-                pplayer_x = player.rect.x
-                pplayer_y = player.rect.y
-        
-                if pvovo_x > pplayer_x:
-                    vovo.speedx = -vel_padrao_vovo
+                if event.type == ALTERA_MOVIMENTO_GATO:
+                    for gato in enemies_cat:
+                        direita_esquerda = random.randint(0,2)
+                        cima_baixo = random.randint(0,2)
+                        if direita_esquerda == 1:
+                            gato.speedx = vel_padrao_vovo
+                        if direita_esquerda == 2:
+                            gato.speedx = -vel_padrao_vovo
+                        if direita_esquerda == 0:
+                            gato.speedx = 0
+                        if cima_baixo == 1:
+                            gato.speedy = vel_padrao_vovo
+                        if cima_baixo == 2:
+                            gato.speedy = -vel_padrao_vovo
+                        if cima_baixo == 0:
+                            gato.speedy = 0
 
-                if pvovo_x < pplayer_x:
-                    vovo.speedx = vel_padrao_vovo
-                if pvovo_y > pplayer_y:
-                    vovo.speedy = -vel_padrao_vovo
-                if pvovo_y < pplayer_y:
-                    vovo.speedy = vel_padrao_vovo
+                if event.type == ALTERA_MOVIMENTO_VOVO:
+                    pvovo_x = vovo.rect.x
+                    pvovo_y = vovo.rect.y
+
+                    pplayer_x = player.rect.x
+                    pplayer_y = player.rect.y
             
+                    if pvovo_x > pplayer_x:
+                        vovo.speedx = -vel_padrao_vovo
+
+                    if pvovo_x < pplayer_x:
+                        vovo.speedx = vel_padrao_vovo
+                    if pvovo_y > pplayer_y:
+                        vovo.speedy = -vel_padrao_vovo
+                    if pvovo_y < pplayer_y:
+                        vovo.speedy = vel_padrao_vovo
+                
             if event.type == pygame.QUIT:
                 game = False
 
             if estado == TROCA_ROUND: # Adicionar aqui a mudança de personagem (if numrounds<=3) e tela de fim do jogo (numrounds<=0)
                 if numrounds <= 0:
-                    segundos = 0
-                    while segundos <= 5:
-                        clock.tick(FPS)
-                        segundos += 1/FPS
-                        if player.moedas >= 50 and player.queijos >= 30:
-                            window.blit(asse['IMGVIT'], (0,0))
-                            text_moedas = font.render(f'{player.moedas}', True, YELLOW)
-                            text_queijos = font.render(f'{player.queijos}', True, YELLOW)
-                            window.blit(text_queijos, (160, 340))
-                            window.blit(text_moedas, (160, 420))
-                            pygame.display.update()
-                        else:
-                            window.blit(asse['IMGAMEOVER'], (0,0))
-                            text_moedas = font.render(f'{player.moedas}', True, YELLOW)
-                            text_queijos = font.render(f'{player.queijos}', True, YELLOW)
-                            window.blit(text_queijos, (160, 340))
-                            window.blit(text_moedas, (160, 420))
-                            pygame.display.update()
-                    game = False
+                    estado = FIM
                 else:
                     texto_round = font.render('ROUND {0}'.format(7-numrounds), True, WHITE)
                     numrounds -= 1
@@ -225,6 +232,28 @@ def gamescreen(window):
                     moedas = respawnamoedas(estado, moedas)
 
                     estado = JOGANDO
+
+            if estado == FIM:
+                if player.moedas >= 50 and player.queijos >= 30:
+                    window.blit(asse['IMGVIT'], (0,0))
+                    text_moedas = font.render(f'{player.moedas}', True, YELLOW)
+                    text_queijos = font.render(f'{player.queijos}', True, YELLOW)
+                    window.blit(text_queijos, (160, 340))
+                    window.blit(text_moedas, (160, 420))
+                    pygame.display.update()
+                else:
+                    window.blit(asse['IMGAMEOVER'], (0,0))
+                    text_moedas = font.render(f'{player.moedas}', True, YELLOW)
+                    text_queijos = font.render(f'{player.queijos}', True, YELLOW)
+                    window.blit(text_queijos, (160, 340))
+                    window.blit(text_moedas, (160, 420))
+                    pygame.display.update()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        estado = INICIO
+                    if event.key == pygame.K_ESCAPE:
+                        game = False
 
             if estado == JOGANDO:
                 if event.type == pygame.KEYDOWN:
