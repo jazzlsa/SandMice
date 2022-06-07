@@ -47,45 +47,40 @@ def gamescreen(window):
             manobra = pygame.sprite.Group()
         return enemies_gato
 
+    # Toca música de fundo
     def playMusicLoop(music, volume):
         pygame.mixer.music.load(music)
         pygame.mixer.music.set_volume(volume)
         pygame.mixer.music.play(loops=-1)
 
+    # Variável que mantém o jogo em looping
     game = True
-
+    # Estado inicial do jogo
     estado = INICIO
-    # Variável para o ajuste de velocidade
+    # Instanciando arrays de tempo
+    last_time = [0]
+    last_time_cat = [0]
+    # Instanciando timer
     clock = pygame.time.Clock()
-    
-    ultimotempo = [0]
-    ultimotempogato = [0]
-    tempo_respawn_gato = 5000 # A cada 5 segundos
 
-    # Criando um grupo de sprites
-    sprites = pygame.sprite.Group()
-    enemies = pygame.sprite.Group()
-    enemies_cat = pygame.sprite.Group()
-    moedas = pygame.sprite.Group()
-    queijos = pygame.sprite.Group()
-    totalmoedas = 3
     # Criando o jogador
     player = jogador(dicionary_assets['IMAGE_MOUSE'],dicionary_assets['SOUND_MOUSE'])
-
+    # Criando vovó em um local do eixo X aleatório
     vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],dicionary_assets['SOUND_GRANDMA'])
     vovo.rect.x = random.randint(60, SCREEN_WIDTH-60)
 
-    perto = True
-    while(perto):
-        x_enemy = random.randint(60, SCREEN_WIDTH-60)
-        if((x_enemy > (player.rect.x + 200)) or (x_enemy < (player.rect.x - 200))):
-            perto = False
-    vovo.rect.x = x_enemy
+    # Criando grupos de sprites
+    player_group = pygame.sprite.Group()
+    enemies_group = pygame.sprite.Group()
+    enemies_cat_group = pygame.sprite.Group()
+    moedas_group = pygame.sprite.Group()
+    queijos_group = pygame.sprite.Group()
     
-    sprites.add(player)
-    enemies.add(vovo)
-    moedas = respawnItem(estado, moedas, 'moeda')
-    queijos = respawnItem(estado, queijos, 'queijo')
+    # Adicionando os sprites dentro dos grupos
+    player_group.add(player)
+    enemies_group.add(vovo)
+    moedas_group = respawnItem(estado, moedas_group, 'moeda')
+    queijos_group = respawnItem(estado, queijos_group, 'queijo')
     
     Left = 0
     Right = 0
@@ -117,8 +112,8 @@ def gamescreen(window):
                 window.blit(dicionary_assets['START_IMAGE'], (0, 0))
                 player.moedas = 0
                 player.queijos = 0
-                ultimotempo.append(tempo)
-                ultimotempogato.append(tempo)
+                last_time.append(tempo)
+                last_time_cat.append(tempo)
                 pygame.display.update()
                 while estado == INICIO:
                     for event in pygame.event.get():
@@ -131,13 +126,13 @@ def gamescreen(window):
             # ----- Verifica consequências
             if estado == JOGANDO:
 
-                if tempo-ultimotempogato[-1] > tempo_respawn_gato:
-                    ultimotempogato.append(tempo)
-                    enemies_cat = respawnCat(enemies_cat)
-                    pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, 500)
+                if tempo-last_time_cat[-1] > TIME_RESPAWN_CAT:
+                    last_time_cat.append(tempo)
+                    enemies_cat_group = respawnCat(enemies_cat_group)
+                    pygame.time.set_timer(ALTERA_MOVIMENTO_GATO, CHANGE_MOVIMENT_CAT)
 
                 if event.type == ALTERA_MOVIMENTO_GATO:
-                    for gato in enemies_cat:
+                    for gato in enemies_cat_group:
                         direita_esquerda = random.randint(0,2)
                         cima_baixo = random.randint(0,2)
                         if direita_esquerda == 1:
@@ -156,13 +151,11 @@ def gamescreen(window):
                 if event.type == ALTERA_MOVIMENTO_VOVO:
                     pvovo_x = vovo.rect.x
                     pvovo_y = vovo.rect.y
-
                     pplayer_x = player.rect.x
                     pplayer_y = player.rect.y
             
                     if pvovo_x > pplayer_x:
                         vovo.speedx = -SPEED_ENEMIES
-
                     if pvovo_x < pplayer_x:
                         vovo.speedx = SPEED_ENEMIES
                     if pvovo_y > pplayer_y:
@@ -176,6 +169,7 @@ def gamescreen(window):
             if estado == TROCA_ROUND:
                 pygame.mixer.music.load(dicionary_assets['SOUND_BACKGROUND'])
                 pygame.mixer.music.play(loops=-1)
+                pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, CHANGE_MOVIMENT_GRANDMA)
                 Left = 0
                 Right = 0
                 Up = 0
@@ -192,19 +186,19 @@ def gamescreen(window):
                     pygame.display.update()
                     pygame.time.delay(2000)
                     tempo = pygame.time.get_ticks()
-                    ultimotempo.append(tempo)
-                    ultimotempogato.append(tempo)
+                    last_time.append(tempo)
+                    last_time_cat.append(tempo)
                     
                     player.rect.centerx = SCREEN_WIDTH/2
                     player.rect.bottom = SCREEN_HEIGHT - 40
-                    moedas = respawnItem(estado, moedas, 'moeda')
-                    queijos = respawnItem(estado, queijos, 'queijo')
-                    pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, 100)
+                    moedas_group = respawnItem(estado, moedas_group, 'moeda')
+                    queijos_group = respawnItem(estado, queijos_group, 'queijo')
 
                     estado = JOGANDO
+                    
 
             if estado == FIM:
-                if player.moedas >= 50 and player.queijos >= 30:
+                if player.moedas >= QUANTITY_COINS_TO_WIN and player.queijos >= QUANTITY_CHEESE_TO_WIN:
                     window.blit(dicionary_assets['IMAGE_VICTORY'], (0,0))
                     text_moedas = font.render(f'{player.moedas}', True, YELLOW)
                     text_queijos = font.render(f'{player.queijos}', True, YELLOW)
@@ -255,18 +249,18 @@ def gamescreen(window):
                         player.speedy -= SPEED_PLAYER
                         Down -= 1
                     
-        sprites.update()
-        enemies.update()
-        enemies_cat.update()
+        player_group.update()
+        enemies_group.update()
+        enemies_cat_group.update()
         pontuacao = font.render('Pontos: {0}'.format(player.moedas), True, BLACK)
         display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, BLACK)
-        texto_tempo = font.render('{0:.1f} s'.format((tempo - ultimotempo[-1])/1000), True, BLACK)
+        texto_tempo = font.render('{0:.1f} s'.format((tempo - last_time[-1])/1000), True, BLACK)
 
-        if pygame.sprite.spritecollide(player, enemies, True, pygame.sprite.collide_mask):
+        if pygame.sprite.spritecollide(player, enemies_group, True, pygame.sprite.collide_mask):
             vovo.sound.play()
             colisao = True
 
-        if pygame.sprite.spritecollide(player, enemies_cat, True, pygame.sprite.collide_mask):
+        if pygame.sprite.spritecollide(player, enemies_cat_group, True, pygame.sprite.collide_mask):
             player.sound.play()
             colisao = True
 
@@ -275,43 +269,38 @@ def gamescreen(window):
             playMusicLoop(dicionary_assets['SOUND_BACKGROUND'], BACKGROUND_VOLUME)
             estado = TROCA_ROUND
 
-            enemies_cat = pygame.sprite.Group()
-            enemies = pygame.sprite.Group()
-            queijos = pygame.sprite.Group()
+            enemies_cat_group = pygame.sprite.Group()
+            enemies_group = pygame.sprite.Group()
+            queijos_group = pygame.sprite.Group()
 
             vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],dicionary_assets['SOUND_GRANDMA'])
+            vovo.rect.x = random.randint(60, SCREEN_WIDTH-60)
+            vovo.speedx = 0
+            vovo.speedy = 0
 
-            perto = True
-            while(perto):
-                x_enemy = random.randint(60, SCREEN_WIDTH-60)
-                if((x_enemy > (player.rect.x + 200)) or (x_enemy < (player.rect.x - 200))):
-                    perto = False
-            vovo.rect.x = x_enemy
-
-            enemies.add(vovo)
-            
-            sprites.add(player)
+            enemies_group.add(vovo)
+            player_group.add(player)
 
             
 
-        if pygame.sprite.spritecollide(player, moedas, True): #Se colisao com moeda -> ganha moeda e cria uma nova moeda
+        if pygame.sprite.spritecollide(player, moedas_group, True): #Se colisao com moeda -> ganha moeda e cria uma nova moeda
             player.moedas += 1
-            moedas = respawnItem(estado, moedas, 'moeda')
+            moedas_group = respawnItem(estado, moedas_group, 'moeda')
 
-        if pygame.sprite.spritecollide(player, queijos, True): #Se colisao com queijo -> ganha queijo e cria uma nova moeda
+        if pygame.sprite.spritecollide(player, queijos_group, True): #Se colisao com queijo -> ganha queijo e cria uma nova moeda
             player.queijos += 1
-            queijos = respawnItem(estado, queijos, 'queijo')
+            queijos_group = respawnItem(estado, queijos_group, 'queijo')
 
         # ----- Gera saídas
         if estado == JOGANDO:
 
             window.blit(dicionary_assets['IMAGE_BACKGROUND'],(0,0)) # Coloca o dicionary_assets['IMAGE_BACKGROUND']
             
-            moedas.draw(window)
-            queijos.draw(window)
-            sprites.draw(window)
-            enemies.draw(window)
-            enemies_cat.draw(window)
+            moedas_group.draw(window)
+            queijos_group.draw(window)
+            player_group.draw(window)
+            enemies_group.draw(window)
+            enemies_cat_group.draw(window)
             
             window.blit(pontuacao, (230, 630))
             window.blit(display_queijos, (450, 630))
