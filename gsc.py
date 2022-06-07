@@ -89,10 +89,11 @@ def gamescreen(window):
 
     # O jogo está sendo jogado
     while game:
+        # Fica calculando o tempo e os FPS do jogo
         clock.tick(FPS)
         tempo = pygame.time.get_ticks()
 
-        # ----- Trata eventos
+        # Trata os estados do jogo
         for event in pygame.event.get():
 
             if estado == INICIO:
@@ -219,23 +220,23 @@ def gamescreen(window):
 
                     estado = JOGANDO
                     
-
+            # Mostra a imagem do final do jogo
             if estado == FIM:
+                # Caso o jogador vença
                 if player.moedas >= QUANTITY_COINS_TO_WIN and player.queijos >= QUANTITY_CHEESE_TO_WIN:
                     window.blit(dicionary_assets['IMAGE_VICTORY'], (0,0))
-                    text_moedas = font.render(f'{player.moedas}', True, YELLOW)
-                    text_queijos = font.render(f'{player.queijos}', True, YELLOW)
-                    window.blit(text_queijos, (160, 340))
-                    window.blit(text_moedas, (160, 420))
-                    pygame.display.update()
+                # Caso o jogador perca
                 else:
                     window.blit(dicionary_assets['IMAGE_GAME_OVER'], (0,0))
-                    text_moedas = font.render(f'{player.moedas}', True, YELLOW)
-                    text_queijos = font.render(f'{player.queijos}', True, YELLOW)
-                    window.blit(text_queijos, (160, 340))
-                    window.blit(text_moedas, (160, 420))
-                    pygame.display.update()
+                
+                # Mostra a quantidade de moedas e queijos e atualiza a tela
+                text_moedas = font.render(f'{player.moedas}', True, YELLOW)
+                text_queijos = font.render(f'{player.queijos}', True, YELLOW)
+                window.blit(text_queijos, (160, 340))
+                window.blit(text_moedas, (160, 420))
+                pygame.display.update()
 
+                # Verifica se a tacla de espaço ou ESC foram apertadas
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         estado = INICIO
@@ -245,36 +246,47 @@ def gamescreen(window):
             # Caso o evento de fechamento do pygame seja acionado
             if event.type == pygame.QUIT:
                 game = False
-                    
+        
+        # Atualiza grupos de sprites no jogo
         player_group.update()
         enemies_group.update()
         enemies_cat_group.update()
-        pontuacao = font.render('Pontos: {0}'.format(player.moedas), True, BLACK)
+        # Atualiza a pontuação de moedas e queijos
+        display_moedas = font.render('Pontos: {0}'.format(player.moedas), True, BLACK)
         display_queijos = font.render('Queijos: {0}'.format(player.queijos), True, BLACK)
         texto_tempo = font.render('{0:.1f} s'.format((tempo - last_time[-1])/1000), True, BLACK)
 
+        # Caso o jogador colida com a vovó
         if pygame.sprite.spritecollide(player, enemies_group, True, pygame.sprite.collide_mask):
             vovo.sound.play()
             colisao = True
 
+        # Caso o jogador colida com o gato
         if pygame.sprite.spritecollide(player, enemies_cat_group, True, pygame.sprite.collide_mask):
             player.sound.play()
             colisao = True
 
-        if colisao: #Se colisao com inimigo -> morte
+        # Caso colisão com a vovó ou o gato seja verdadeira
+        if colisao:
             colisao = False
+            
+            # Reinicia música de fundo
             playMusicLoop(dicionary_assets['SOUND_BACKGROUND'], BACKGROUND_VOLUME)
+            # Muda o estado para trocar o round
             estado = TROCA_ROUND
 
+            # Reinicia todos os grupos de sprites
             enemies_cat_group = pygame.sprite.Group()
             enemies_group = pygame.sprite.Group()
             queijos_group = pygame.sprite.Group()
 
+            # Reinicia o local da vovó e reinicia a velocidade para 0
             vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],dicionary_assets['SOUND_GRANDMA'])
             vovo.rect.x = random.randint(60, SCREEN_WIDTH-60)
             vovo.speedx = 0
             vovo.speedy = 0
 
+            # Instancia a vovó e o jogador no grupo dos sprites
             enemies_group.add(vovo)
             player_group.add(player)
 
@@ -299,7 +311,7 @@ def gamescreen(window):
             enemies_group.draw(window)
             enemies_cat_group.draw(window)
             
-            window.blit(pontuacao, (230, 630))
+            window.blit(display_moedas, (230, 630))
             window.blit(display_queijos, (450, 630))
             window.blit(texto_tempo, (10, 630))
 
