@@ -1,6 +1,4 @@
 # Importa pacotes e arquivos
-from asyncio.windows_events import NULL
-from ssl import create_default_context
 import pygame
 from config import *
 from gsc import *
@@ -8,7 +6,7 @@ from assets import loadScreen
 
 # Instancia a classe pygame
 pygame.init()
-pygame.mixer.init() 
+pygame.mixer.init()
 
 # Carrega dados da tela
 screen_assets = loadScreen()

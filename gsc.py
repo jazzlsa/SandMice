@@ -1,5 +1,4 @@
 # Importa pacotes e arquivos
-from tokenize import String
 import pygame
 from config import *
 import random
