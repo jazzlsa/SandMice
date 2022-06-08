@@ -305,7 +305,7 @@ def gamescreen(window):
                     estado = FIM
                     
             # Mostra a imagem do final do jogo
-            if estado == FIM:
+            if estado == FIM and round >= QUANTITY_ROUNDS:
                 # Caso o jogador vença
                 if player.moedas >= QUANTITY_COINS_TO_WIN and player.queijos >= QUANTITY_CHEESE_TO_WIN:
                     window.blit(dicionary_assets['IMAGE_VICTORY'], (0,0))
