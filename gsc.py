@@ -52,13 +52,21 @@ def gamescreen(window):
 
     # Atualiza e desenha os scores na tela
     def changeScreenScore(quantity_coins, quantity_cheese, time):
-        display_coins = font.render('Pontos: {0}'.format(quantity_coins), True, BLACK)
+        display_coins = font.render('Moedas: {0}'.format(quantity_coins), True, BLACK)
         display_cheese = font.render('Queijos: {0}'.format(quantity_cheese), True, BLACK)
-        display_time = font.render('{0:.1f} s'.format((time[0] - time[1])/1000), True, BLACK)
+        display_time = font.render('{0:.1f} s'.format((time[0] - time[1] - time[2])/1000), True, BLACK)
         window.blit(display_coins, (DISPLAY_COINS_X, DISPLAY_COINS_Y))
         window.blit(display_cheese, (DISPLAY_CHEESE_X, DISPLAY_CHEESE_Y))
         window.blit(display_time, (DISLAY_TIME_X, DISLAY_TIME_Y))
+        if(PAUSE):
+            printScreenPaused()                
         pygame.display.update()
+
+    def printScreenPaused():
+        display_pause = font.render('JOGO PAUSADO',True, RED)
+        display_instructions = font.render('Aperte P para continuar',True, RED)
+        window.blit(display_pause, ((SCREEN_WIDTH/2)-130, SCREEN_HEIGHT/2))
+        window.blit(display_instructions, ((SCREEN_WIDTH/2)-190, (SCREEN_HEIGHT/2)+100))
 
     # Desenha os Sprites na tela
     def drawSpritesOnScreen():
@@ -99,6 +107,10 @@ def gamescreen(window):
     MUTE = False
     # Variável que define se está pausado ou não
     PAUSE = False
+    # Instanciando array de tempo pausado
+    tempo_pausado = {}
+    tempo_pausado['total'] = 0
+    tempo_pausado['inicial'] = 0
     # Estado inicial do jogo
     estado = INICIO
     # Instanciando arrays de tempo
@@ -254,11 +266,14 @@ def gamescreen(window):
                     if event.key == pygame.K_p:
                         if(PAUSE):
                             PAUSE = False
+                            tempo_pausado['total'] += pygame.time.get_ticks() - tempo_pausado['inicial']
                         else:
                             PAUSE = True
+                            Left,Right,Up,Down = 0,0,0,0
                             vovo.speedx,vovo.speedy,player.speedy,player.speedx = 0,0,0,0
                             for gato in enemies_cat_group:
                                 gato.speedx,gato.speedy = 0,0
+                            tempo_pausado['inicial'] = pygame.time.get_ticks()
 
             # Caso o jogador tenha perdido o round mostra o próximo
             if estado == TROCA_ROUND:
@@ -275,6 +290,7 @@ def gamescreen(window):
                     tempo = pygame.time.get_ticks()
                     last_time.append(tempo)
                     last_time_cat.append(tempo)
+                    tempo_pausado['inicial'],tempo_pausado['total'] = 0,0
                     
                     # Volta o jogador na posição inicial
                     player.rect.centerx = SCREEN_WIDTH/2
@@ -361,12 +377,9 @@ def gamescreen(window):
         # Este estado está aqui porque ele indifere dos eventos do jogo
         if estado == JOGANDO:
             drawSpritesOnScreen()
-            changeScreenScore(player.moedas, player.queijos, [tempo,last_time[-1]])
+            changeScreenScore(player.moedas, player.queijos, [tempo,last_time[-1],tempo_pausado['total']])
         
         # Atualiza grupos de sprites no jogo
         player_group.update()
         enemies_group.update()
         enemies_cat_group.update()
-
-        # Atualiza o frame do jogo
-        pygame.display.update()
