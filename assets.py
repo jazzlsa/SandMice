@@ -10,7 +10,7 @@ def load():
     # Imagem caso o jogador perca
     dicionary_assets['IMAGE_GAME_OVER'] = pygame.image.load(os.path.join(IMAGES_PATH, 'screen-failed.png')).convert()
     # Imagem caso o jogador ganhe
-    dicionary_assets['IMAGE_VICTORY'] = pygame.image.load(os.path.join(IMAGES_PATH, 'screen-victory.png'))
+    dicionary_assets['IMAGE_VICTORY'] = pygame.image.load(os.path.join(IMAGES_PATH, 'screen-victory.png')).convert()
     # Imagem do jogador
     dicionary_assets['IMAGE_MOUSE'] = pygame.image.load(os.path.join(IMAGES_PATH, 'icon-player.png')).convert_alpha()
     dicionary_assets['IMAGE_MOUSE'] = pygame.transform.scale(dicionary_assets['IMAGE_MOUSE'], (IMG_SIZE, IMG_SIZE))

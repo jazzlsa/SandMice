@@ -162,8 +162,8 @@ def gamescreen(window):
                 round = 1
 
                 tempo = pygame.time.get_ticks()
-                text_vencerqueijos = dicionary_assets['FONT_PEQUENA'].render(f'{VENCERQUEIJOS}', True, YELLOW)
-                text_vencermoedas = dicionary_assets['FONT_PEQUENA'].render(f'{VENCERMOEDAS}', True, YELLOW)
+                text_vencerqueijos = dicionary_assets['FONT_PEQUENA'].render(f'{QUANTITY_CHEESE_TO_WIN}', True, YELLOW)
+                text_vencermoedas = dicionary_assets['FONT_PEQUENA'].render(f'{QUANTITY_COINS_TO_WIN}', True, YELLOW)
                 window.blit(dicionary_assets['START_IMAGE'], (0, 0))
                 window.blit(text_vencermoedas, (416, 482))
                 window.blit(text_vencerqueijos, (40, 511))
