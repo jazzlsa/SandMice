@@ -14,7 +14,7 @@ Sons - Onde ficam as músicas e efeitos sonoros
 
 assets.py - Cria o dicionário de imagens, nomes e sons
 
-config.py - Constantes para rodar o jogo
+config.py - Constantes para rodar o jogo (aqui podem ser alteradas as configurações do jogo)
 
 sprites.py - Cria as classes usadas no jogo
 
@@ -23,30 +23,29 @@ gsc.py - Onde fica o loop principal que controla o jogo
 jogo.py - Onde todos os cógidos estão unidos para jogar
 
 
-Para iniciar o jogo basta rodar o arquivo jogo.py.
+Para iniciar o jogo basta rodar o arquivo jogo.py. Para isso, é necessário se ter a biblioteca pygame instalada, o que pode ser feito executando o comando pip install pygame no terminal.
 
+**LINK DO VÍDEO DE DEMONSTRAÇÃO**: https://youtu.be/C5C82sjx4yQ
 
 Fontes:
 
-imagem de fundo adaptada de https://br.pinterest.com/emilyjin545/pixel-art/
+* imagem de fundo adaptada de https://br.pinterest.com/emilyjin545/pixel-art/
 
-imagem coin : https://www.iconpacks.net/free-icon/coin-794.html
+* imagem coin : https://www.iconpacks.net/free-icon/coin-794.html
 
-música pegue o pombo : https://youtu.be/GQWYAn6oyxI
+* música pegue o pombo : https://youtu.be/GQWYAn6oyxI
 
-som gato : https://youtu.be/NRXDGAJAXXU
+* som gato : https://youtu.be/NRXDGAJAXXU
 
-som vóvó : https://www.youtube.com/watch?v=bWNS9kjyR_8
+* som vóvó : https://www.youtube.com/watch?v=bWNS9kjyR_8
 
-som comendo o queijo : https://www.youtube.com/watch?v=PFLHTy25-Oo
+* som comendo o queijo : https://www.youtube.com/watch?v=PFLHTy25-Oo
 
-som coletando moeda : https://www.youtube.com/watch?v=mQSmVZU5EL4
+* som coletando moeda : https://www.youtube.com/watch?v=mQSmVZU5EL4
 
-rato fugindo do gato quando é pego: https://www.youtube.com/watch?v=UzMKS_Rm9vM
+* rato fugindo do gato quando é pego: https://www.youtube.com/watch?v=UzMKS_Rm9vM
 
 
-Jéssica Lendaw Silva de Araújo
-
+Alunos: Jéssica Lendaw Silva de Araújo
 Raul Rangel Moraes Bezerra
-
 Yan Vieira Romano
