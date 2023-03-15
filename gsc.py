@@ -3,14 +3,16 @@ import pygame
 from config import *
 import random
 from sprites import *
-from assets import load
+from assets import *
 
 def gamescreen(window):
     # Carrega arquivos do jogo
-    dicionary_assets = load()
+    dicionary_images = load_images()
+    dicionary_sounds = load_sounds()
+    dicionary_fonts = load_fonts()
     
     # Instancia a fonte padrão do jogo
-    font = dicionary_assets['FONT_GAME']
+    font = dicionary_fonts['FONT_GAME']
     
     # Função de criação de itens (moedas ou queijos)
     def respawnItem(status, item_group, type_item):
@@ -19,12 +21,12 @@ def gamescreen(window):
             item_group = pygame.sprite.Group()
         if(type_item == 'moeda'):
             item['max_quantity'] = QUANTITY_COINS_PER_ROUND
-            item['image'] = dicionary_assets['IMAGE_COIN']
-            item['sound'] = dicionary_assets['SOUND_COIN']
+            item['image'] = dicionary_images['IMAGE_COIN']
+            item['sound'] = dicionary_sounds['SOUND_COIN']
         if(type_item == 'queijo'):
             item['max_quantity'] = QUANTITY_CHEESES_PER_ROUND
-            item['image'] = dicionary_assets['IMAGE_CHEESE']
-            item['sound'] = dicionary_assets['SOUND_CHEESE']
+            item['image'] = dicionary_images['IMAGE_CHEESE']
+            item['sound'] = dicionary_sounds['SOUND_CHEESE']
         while len(item_group) < item['max_quantity']:
             new_item = coin([item['image']],item['sound'])
             item_group.add(new_item)
@@ -36,7 +38,7 @@ def gamescreen(window):
     # Função de criação de novo inimigo (gato)
     def respawnCat(enemy_cat):
         while True:
-            new_enemy = inimigo([dicionary_assets['IMAGE_CAT'], dicionary_assets['IMAGE_CAT']],dicionary_assets['SOUND_CAT'])
+            new_enemy = inimigo([dicionary_images['IMAGE_CAT'], dicionary_images['IMAGE_CAT']],dicionary_sounds['SOUND_CAT'])
             new_enemy.rect.centerx = random.randint(CAT_WIDTH, SCREEN_WIDTH - CAT_WIDTH)
             new_enemy.rect.bottom = random.randint(CAT_HEIGHT, SCREEN_HEIGHT - CAT_HEIGHT)
             if(MUTE!=True):
@@ -69,7 +71,7 @@ def gamescreen(window):
 
     # Desenha os Sprites na tela
     def drawSpritesOnScreen():
-        window.blit(dicionary_assets['IMAGE_BACKGROUND'],(0,0))
+        window.blit(dicionary_images['IMAGE_BACKGROUND'],(0,0))
         moedas_group.draw(window)
         queijos_group.draw(window)
         player_group.draw(window)
@@ -119,9 +121,9 @@ def gamescreen(window):
     clock = pygame.time.Clock()
 
     # Criando o jogador
-    player = jogador([dicionary_assets['IMAGE_MOUSE']],dicionary_assets['SOUND_MOUSE'])
+    player = jogador([dicionary_images['IMAGE_MOUSE']],dicionary_sounds['SOUND_MOUSE'])
     # Criando vovó em um local do eixo X aleatório
-    vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],dicionary_assets['SOUND_GRANDMA'])
+    vovo = inimigo([dicionary_images['IMAGE_GRANDMA_RIGHT'], dicionary_images['IMAGE_GRANDMA_LEFT']],dicionary_sounds['SOUND_GRANDMA'])
     vovo.rect.x = random.randint(60, SCREEN_WIDTH-60)
 
     # Criando grupos de sprites
@@ -154,16 +156,16 @@ def gamescreen(window):
 
             if estado == INICIO:
                 #Tocando a música de introdução
-                playMusicLoop(dicionary_assets['SOUND_BACKGROUND_INTRO'], BACKGROUND_VOLUME)
+                playMusicLoop(dicionary_sounds['SOUND_BACKGROUND_INTRO'], BACKGROUND_VOLUME)
                 
                 # Definindo variáveis para inicialização
                 Left,Right,Up,Down,player.speedx,player.speedy,player.moedas,player.queijos = 0,0,0,0,0,0,0,0
                 round = 1
 
                 tempo = pygame.time.get_ticks()
-                text_vencerqueijos = dicionary_assets['FONT_PEQUENA'].render(f'{QUANTITY_CHEESE_TO_WIN}', True, YELLOW)
-                text_vencermoedas = dicionary_assets['FONT_PEQUENA'].render(f'{QUANTITY_COINS_TO_WIN}', True, YELLOW)
-                window.blit(dicionary_assets['START_IMAGE'], (0, 0))
+                text_vencerqueijos = dicionary_fonts['FONT_PEQUENA'].render(f'{QUANTITY_CHEESE_TO_WIN}', True, YELLOW)
+                text_vencermoedas = dicionary_fonts['FONT_PEQUENA'].render(f'{QUANTITY_COINS_TO_WIN}', True, YELLOW)
+                window.blit(dicionary_images['START_IMAGE'], (0, 0))
                 window.blit(text_vencermoedas, (416, 482))
                 window.blit(text_vencerqueijos, (40, 511))
                 last_time.append(tempo)
@@ -277,7 +279,7 @@ def gamescreen(window):
             # Caso o jogador tenha perdido o round mostra o próximo
             if estado == TROCA_ROUND:
                 # Tocando música de fundo
-                playMusicLoop(dicionary_assets['SOUND_BACKGROUND'], BACKGROUND_VOLUME)
+                playMusicLoop(dicionary_sounds['SOUND_BACKGROUND'], BACKGROUND_VOLUME)
                 pygame.time.set_timer(ALTERA_MOVIMENTO_VOVO, CHANGE_MOVIMENT_GRANDMA)
                 
                 # Definindo variáveis para inicialização do round
@@ -307,10 +309,10 @@ def gamescreen(window):
             if estado == FIM and round >= QUANTITY_ROUNDS:
                 # Caso o jogador vença
                 if player.moedas >= QUANTITY_COINS_TO_WIN and player.queijos >= QUANTITY_CHEESE_TO_WIN:
-                    window.blit(dicionary_assets['IMAGE_VICTORY'], (0,0))
+                    window.blit(dicionary_images['IMAGE_VICTORY'], (0,0))
                 # Caso o jogador perca
                 else:
-                    window.blit(dicionary_assets['IMAGE_GAME_OVER'], (0,0))
+                    window.blit(dicionary_images['IMAGE_GAME_OVER'], (0,0))
 
                 # Desenha a imagem final
                 drawFinalScreen()
@@ -343,7 +345,7 @@ def gamescreen(window):
             colisao = False
             
             # Reinicia música de fundo
-            playMusicLoop(dicionary_assets['SOUND_BACKGROUND'], BACKGROUND_VOLUME)
+            playMusicLoop(dicionary_sounds['SOUND_BACKGROUND'], BACKGROUND_VOLUME)
             
             # Muda o estado para trocar o round
             estado = TROCA_ROUND
@@ -354,7 +356,7 @@ def gamescreen(window):
             queijos_group = pygame.sprite.Group()
 
             # Reinicia o local da vovó e reinicia a velocidade para 0
-            vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],dicionary_assets['SOUND_GRANDMA'])
+            vovo = inimigo([dicionary_images['IMAGE_GRANDMA_RIGHT'], dicionary_images['IMAGE_GRANDMA_LEFT']],dicionary_sounds['SOUND_GRANDMA'])
             vovo.rect.x = random.randint(60, SCREEN_WIDTH-60)
             vovo.speedx,vovo.speedy = 0, 0
 
