@@ -26,7 +26,7 @@ def gamescreen(window):
             item['image'] = dicionary_assets['IMAGE_CHEESE']
             item['sound'] = dicionary_assets['SOUND_CHEESE']
         while len(item_group) < item['max_quantity']:
-            new_item = coin(item['image'],item['sound'])
+            new_item = coin([item['image']],item['sound'])
             item_group.add(new_item)
         if status != INICIO and status != TROCA_ROUND:
             if(MUTE!=True):
@@ -119,7 +119,7 @@ def gamescreen(window):
     clock = pygame.time.Clock()
 
     # Criando o jogador
-    player = jogador(dicionary_assets['IMAGE_MOUSE'],dicionary_assets['SOUND_MOUSE'])
+    player = jogador([dicionary_assets['IMAGE_MOUSE']],dicionary_assets['SOUND_MOUSE'])
     # Criando vovó em um local do eixo X aleatório
     vovo = inimigo([dicionary_assets['IMAGE_GRANDMA_RIGHT'], dicionary_assets['IMAGE_GRANDMA_LEFT']],dicionary_assets['SOUND_GRANDMA'])
     vovo.rect.x = random.randint(60, SCREEN_WIDTH-60)
